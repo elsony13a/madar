@@ -7,6 +7,12 @@ terraform {
       version = "~> 5.0"
     }
   }
+
+backend "s3" {
+  bucket = "madar-statefile"
+  key    = "madar/terraform.tfstate"
+  region = "us-east-1"
+}
 }
 
 provider "aws" {
