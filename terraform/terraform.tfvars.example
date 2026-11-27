@@ -1,0 +1,13 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# terraform.tfvars is git-ignored by convention; do NOT commit real values.
+
+aws_region       = "eu-central-1" # same region as the Cognito user pool
+table_name       = "madar"
+bucket_name      = "madadr-photos" # must be globally unique
+frontend_origin  = "https://madar-five-swart.vercel.app"
+
+cognito_user_pool_id = "" # e.g. eu-central-1_XXXXXXXXX
+cognito_client_id    = ""
+
+# Vodafone Cash number text shown to students. Leave empty to keep manual payment disabled.
+manual_payment_instructions = ""
