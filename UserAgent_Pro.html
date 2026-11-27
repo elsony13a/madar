@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UserAgent Pro</title>
+<style>
+:root{--bg:#060a1a;--panel:#0a0f20;--panel2:#0e1530;--line:#1a2342;--cy:#22d3ee;--ye:#fde047;--tx:#cbd5e1;--mu:#64748b;--ok:#34d399;--bad:#f87171}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--tx);font:13px/1.4 ui-monospace,"JetBrains Mono","SF Mono",Menlo,Consolas,monospace}
+button,input,select{font:inherit;color:inherit}
+.app{display:grid;grid-template-columns:300px 1fr;height:100vh}
+aside{background:var(--panel);border-right:1px solid var(--line);overflow-y:auto;display:flex;flex-direction:column}
+.side-in{padding:16px;flex:1}
+h1{margin:0;color:var(--cy);font-size:18px;letter-spacing:.12em}
+.sub{color:var(--mu);font-size:10px;letter-spacing:.12em;margin-bottom:6px}
+.sec{margin:16px 0 8px;font-size:11px;letter-spacing:.14em;color:var(--cy);font-weight:700;border-left:3px solid var(--cy);padding-left:8px}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{background:transparent;border:1px solid var(--line);color:var(--mu);border-radius:999px;padding:5px 12px;font-size:11px;cursor:pointer}
+.chip:hover{border-color:#34406a;color:var(--tx)}
+.chip.on{border:1.5px solid var(--cy);color:#fff;background:rgba(34,211,238,.1);box-shadow:0 0 0 2px rgba(34,211,238,.12)}
+.hint{color:var(--mu);font-size:10px;margin:6px 0 0;line-height:1.3}
+input[type=text],input[type=number],select{width:100%;background:#070c1c;border:1px solid var(--line);border-radius:8px;padding:10px 12px;outline:none}
+input:focus,select:focus{border-color:var(--cy)}
+#count{color:var(--cy);font-size:16px}
+.mid{text-align:center;color:var(--mu);font-size:10px;margin:2px 0 8px}
+.lbl{font-size:10px;color:var(--mu);letter-spacing:.1em;margin:10px 0 4px}
+.quick{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.quick button{background:#0b1226;border:1px solid var(--line);border-radius:6px;padding:5px 10px;font-size:10px;color:var(--mu);cursor:pointer}
+.quick button:hover{color:var(--cy);border-color:var(--cy)}
+.row2{display:flex;align-items:center;gap:10px;margin-top:8px;font-size:11px;color:var(--mu)}
+.cc-list{height:200px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;margin-top:8px;background:#070c1c}
+.cc{display:flex;gap:12px;padding:6px 10px;cursor:pointer;color:var(--mu);border:1px solid transparent}
+.cc b{font-weight:400;width:22px}
+.cc:hover{background:#0e1530}
+.cc.on{border-color:var(--cy);color:#fff;background:rgba(34,211,238,.08)}
+.gen-wrap{position:sticky;bottom:0;background:var(--panel);padding:12px 16px;border-top:1px solid var(--line)}
+.gen{width:100%;border:0;border-radius:8px;padding:14px;font-weight:700;letter-spacing:.12em;cursor:pointer;color:#001018;background:linear-gradient(90deg,#0ea5e9,#22d3ee)}
+.gen:disabled{opacity:.6;cursor:wait}
+.reset{background:none;border:0;color:var(--mu);font-size:10px;letter-spacing:.1em;cursor:pointer;width:100%;margin-bottom:8px}
+.reset:hover{color:var(--cy)}
+main{display:flex;flex-direction:column;min-width:0;height:100vh}
+.tabs{display:flex;align-items:center;gap:6px;padding:14px 18px 0;border-bottom:1px solid var(--line)}
+.tab{background:none;border:0;border-bottom:2px solid transparent;color:var(--mu);padding:10px 12px;letter-spacing:.1em;font-size:11px;cursor:pointer}
+.tab.on{color:var(--cy);border-color:var(--cy)}
+.sp{flex:1}
+.lnk{background:none;border:0;color:var(--mu);cursor:pointer;font-size:11px;padding:10px 8px}
+.lnk:hover{color:var(--cy)}
+.page{display:none;flex:1;overflow:auto;padding:16px 18px}
+.page.on{display:block}
+.stats{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+.stat{border:1px solid var(--line);border-radius:999px;padding:5px 14px;font-size:11px;color:var(--mu)}
+.stat b{color:#fff;margin-left:4px}
+.bar{height:3px;background:var(--line);border-radius:3px;margin-bottom:12px;overflow:hidden;display:none}
+.bar i{display:block;height:100%;width:0;background:var(--cy);transition:width .1s}
+table{border-collapse:collapse;width:100%;min-width:1100px}
+th{text-align:left;font-size:10px;letter-spacing:.14em;color:var(--mu);padding:8px 10px;font-weight:400}
+td{padding:10px;border-top:1px solid var(--line);white-space:nowrap;font-size:12px}
+td.n{color:var(--mu);font-size:10px}
+td.m{color:var(--ye);font-weight:700}
+td.b{font-weight:700}
+.tag{border:1.5px solid var(--cy);color:var(--cy);border-radius:4px;padding:2px 8px;background:rgba(34,211,238,.08);font-size:11px}
+.okc{color:var(--ok);text-align:center}
+.cp{background:#0b1226;border:1px solid var(--line);border-radius:6px;padding:4px 8px;cursor:pointer;color:var(--mu)}
+.cp:hover{color:var(--cy);border-color:var(--cy)}
+.empty{color:var(--mu);padding:40px;text-align:center}
+textarea{width:100%;height:150px;background:#070c1c;border:1px solid var(--line);border-radius:8px;padding:12px;color:var(--tx);font:inherit;outline:none;resize:vertical}
+.card{border:1px solid var(--line);border-radius:10px;padding:14px;margin:12px 0;background:var(--panel)}
+.card h3{margin:0 0 8px;color:var(--cy);font-size:12px;letter-spacing:.12em}
+.kv{display:grid;grid-template-columns:140px 1fr;gap:4px 12px;font-size:12px}
+.kv span{color:var(--mu)}
+.vgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(420px,1fr));gap:12px}
+.vgrid table{min-width:0}
+.about p{max-width:760px;color:var(--tx);line-height:1.6}
+.toast{position:fixed;right:18px;bottom:18px;background:#0e1530;border:1px solid var(--cy);color:#fff;padding:10px 16px;border-radius:8px;opacity:0;transition:.2s;pointer-events:none}
+.toast.on{opacity:1}
+@media(max-width:820px){.app{grid-template-columns:1fr;height:auto}aside{max-height:none}main{height:auto;min-height:70vh}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside>
+ <div class="side-in">
+  <h1>UA GENERATOR</h1><div class="sub">USERAGENT PRO</div>
+
+  <div class="sec">MODE · SOCIAL APP</div>
+  <div class="chips" id="modeChips"></div>
+  <p class="hint">Standard = regular browser UA. Social apps apply to Android / iOS only; desktop always gets a regular browser UA.</p>
+  <input type="text" id="appVer" style="margin-top:10px" placeholder="Custom app version e.g. 475.0.0.31.114">
+  <p class="hint">Overrides the app version token (Facebook FBAV / Instagram version). Leave empty for auto.</p>
+
+  <div class="sec">ANDROID VERSION</div>
+  <div class="chips" id="andChips"></div>
+
+  <div class="sec">iOS</div>
+  <div class="chips" id="iosChips"></div>
+
+  <div class="sec">DESKTOP</div>
+  <div class="chips" id="deskChips"></div>
+  <p class="hint">Nothing selected in any group = every platform.</p>
+
+  <div class="sec">GENERATE COUNT</div>
+  <input type="number" id="count" value="10" min="1" max="50000">
+  <div class="mid" id="across">across 3 browsers</div>
+  <select id="browser"><option value="">Random browser</option><option value="chrome">Chrome</option><option value="edge">Edge</option><option value="firefox">Firefox</option></select>
+  <div class="lbl">BROWSER VERSION</div>
+  <select id="verMode"><option value="recent">Random (recent)</option><option value="all">Random (wide range)</option></select>
+  <input type="text" id="custVer" style="margin-top:8px" placeholder="e.g. 158.0.8127.36">
+  <p class="hint">Custom version overrides the list. Leave empty for auto.</p>
+  <div class="row2"><input type="checkbox" id="reduced"><label for="reduced">Reduced UA: Chrome/&lt;major&gt;.0.0.0 (Chrome, Edge, Samsung)</label></div>
+  <div class="quick" id="quick"></div>
+
+  <div class="sec" style="display:flex;align-items:center;justify-content:space-between"><span>COUNTRIES</span><button class="chip on" id="allBtn">✓ ALL</button></div>
+  <input type="text" id="ccSearch" placeholder="search…">
+  <div class="cc-list" id="ccList"></div>
+ </div>
+ <div class="gen-wrap">
+  <button class="reset" id="reset">↻ RESET NO-REPEAT HISTORY (<span id="hist">0</span>)</button>
+  <button class="gen" id="gen">⚡ GENERATE USER AGENTS</button>
+ </div>
+</aside>
+
+<main>
+ <div class="tabs">
+  <button class="tab on" data-p="p1">◎ GENERATOR</button>
+  <button class="tab" data-p="p2">⌕ UA ANALYSER</button>
+  <button class="tab" data-p="p3">⚑ LATEST VERSIONS</button>
+  <button class="tab" data-p="p4">ⓘ ABOUT</button>
+  <div class="sp"></div>
+  <button class="lnk" id="copyAll">Copy All</button>
+  <button class="lnk" id="exportTxt">Export TXT</button>
+ </div>
+
+ <div class="page on" id="p1">
+  <div class="stats">
+   <div class="stat">Total: <b id="sTotal">0</b></div>
+   <div class="stat">Showing: <b id="sShow">0</b></div>
+   <div class="stat">Time: <b id="sTime">0.00s</b></div>
+   <div class="stat">Valid: <b id="sValid">0/0</b></div>
+  </div>
+  <div class="bar" id="bar"><i id="barI"></i></div>
+  <div id="tableWrap"><div class="empty">Pick options on the left and press GENERATE USER AGENTS.</div></div>
+ </div>
+
+ <div class="page" id="p2">
+  <div class="lbl">PASTE ONE OR MORE USER AGENTS (one per line)</div>
+  <textarea id="anaIn" placeholder="Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) …"></textarea>
+  <div style="margin-top:8px"><button class="chip on" id="anaBtn">ANALYSE</button></div>
+  <div id="anaOut"></div>
+ </div>
+
+ <div class="page" id="p3"><div id="verOut"></div></div>
+
+ <div class="page about" id="p4">
+  <div class="card"><h3>ABOUT</h3>
+  <p>UserAgent Pro builds internally consistent User-Agent strings for testing how <b>your own website</b> handles Facebook / Instagram in-app browsers and regular browsers. Each string is built in a fixed order: device → an OS version that device supports → matching build / WebKit → a compatible app version → random ids, locale and screen values.</p>
+  <p><b>No repeats:</b> every generated string is remembered (hashed, in this browser's local storage). Generating again, or pressing "Generate" many times, will never return a string you already got. Use "Reset no-repeat history" to start over. If a selection simply has no more unique combinations (for example reduced desktop UAs), the tool stops early and tells you.</p>
+  <p><b>Data accuracy:</b> device identifiers, iOS builds and Android build families are best-effort public data. Facebook/Instagram build ids (FBBV, version codes) change every release and were not verifiable offline: replace them with values captured from real devices in your own logs, using the Python script's <code>--data-file</code>, or edit the DATA block in this file.</p>
+  <p>Windows 10 and Windows 11 send the identical UA (<code>Windows NT 10.0</code>); the label is metadata only. The country sets the locale used inside the string (FBLC / Instagram locale).</p></div>
+ </div>
+</main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const D = {"IPHONES": [["iPhone10,1", "iPhone 8", "15.0", "16.7", 750, 1334, 2], ["iPhone10,4", "iPhone 8", "15.0", "16.7", 750, 1334, 2], ["iPhone10,2", "iPhone 8 Plus", "15.0", "16.7", 1242, 2208, 3], ["iPhone10,5", "iPhone 8 Plus", "15.0", "16.7", 1242, 2208, 3], ["iPhone10,3", "iPhone X", "15.0", "16.7", 1125, 2436, 3], ["iPhone10,6", "iPhone X", "15.0", "16.7", 1125, 2436, 3], ["iPhone11,2", "iPhone XS", "15.0", "18.6", 1125, 2436, 3], ["iPhone11,4", "iPhone XS Max", "15.0", "18.6", 1242, 2688, 3], ["iPhone11,6", "iPhone XS Max", "15.0", "18.6", 1242, 2688, 3], ["iPhone11,8", "iPhone XR", "15.0", "18.6", 828, 1792, 2], ["iPhone12,1", "iPhone 11", "15.0", "26.1", 828, 1792, 2], ["iPhone12,3", "iPhone 11 Pro", "15.0", "26.1", 1125, 2436, 3], ["iPhone12,5", "iPhone 11 Pro Max", "15.0", "26.1", 1242, 2688, 3], ["iPhone12,8", "iPhone SE (2nd gen)", "15.0", "26.1", 750, 1334, 2], ["iPhone13,1", "iPhone 12 mini", "15.0", "26.1", 1080, 2340, 3], ["iPhone13,2", "iPhone 12", "15.0", "26.1", 1170, 2532, 3], ["iPhone13,3", "iPhone 12 Pro", "15.0", "26.1", 1170, 2532, 3], ["iPhone13,4", "iPhone 12 Pro Max", "15.0", "26.1", 1284, 2778, 3], ["iPhone14,4", "iPhone 13 mini", "15.0", "26.1", 1080, 2340, 3], ["iPhone14,5", "iPhone 13", "15.0", "26.1", 1170, 2532, 3], ["iPhone14,2", "iPhone 13 Pro", "15.0", "26.1", 1170, 2532, 3], ["iPhone14,3", "iPhone 13 Pro Max", "15.0", "26.1", 1284, 2778, 3], ["iPhone14,6", "iPhone SE (3rd gen)", "15.4", "26.1", 750, 1334, 2], ["iPhone14,7", "iPhone 14", "16.0", "26.1", 1170, 2532, 3], ["iPhone14,8", "iPhone 14 Plus", "16.0", "26.1", 1284, 2778, 3], ["iPhone15,2", "iPhone 14 Pro", "16.0", "26.1", 1179, 2556, 3], ["iPhone15,3", "iPhone 14 Pro Max", "16.0", "26.1", 1290, 2796, 3], ["iPhone15,4", "iPhone 15", "17.0", "26.1", 1179, 2556, 3], ["iPhone15,5", "iPhone 15 Plus", "17.0", "26.1", 1290, 2796, 3], ["iPhone16,1", "iPhone 15 Pro", "17.0", "26.1", 1179, 2556, 3], ["iPhone16,2", "iPhone 15 Pro Max", "17.0", "26.1", 1290, 2796, 3], ["iPhone17,3", "iPhone 16", "18.0", "26.1", 1179, 2556, 3], ["iPhone17,4", "iPhone 16 Plus", "18.0", "26.1", 1290, 2796, 3], ["iPhone17,1", "iPhone 16 Pro", "18.0", "26.1", 1206, 2622, 3], ["iPhone17,2", "iPhone 16 Pro Max", "18.0", "26.1", 1320, 2868, 3], ["iPhone17,5", "iPhone 16e", "18.3", "26.1", 1170, 2532, 3]], "IOS_BUILDS": {"15.0": ["19A346", "605.1.15"], "15.1": ["19B74", "605.1.15"], "15.2": ["19C56", "605.1.15"], "15.3": ["19D50", "605.1.15"], "15.4": ["19E241", "605.1.15"], "15.5": ["19F77", "605.1.15"], "15.6": ["19G71", "605.1.15"], "15.7": ["19H12", "605.1.15"], "16.0": ["20A362", "605.1.15"], "16.1": ["20B82", "605.1.15"], "16.2": ["20C65", "605.1.15"], "16.3": ["20D47", "605.1.15"], "16.4": ["20E247", "605.1.15"], "16.5": ["20F66", "605.1.15"], "16.6": ["20G75", "605.1.15"], "16.7": ["20H19", "605.1.15"], "16.7.10": ["20H350", "605.1.15"], "17.0": ["21A329", "605.1.15"], "17.1": ["21B74", "605.1.15"], "17.1.1": ["21B91", "605.1.15"], "17.2": ["21C62", "605.1.15"], "17.2.1": ["21C66", "605.1.15"], "17.3": ["21D50", "605.1.15"], "17.3.1": ["21D61", "605.1.15"], "17.4": ["21E219", "605.1.15"], "17.4.1": ["21E236", "605.1.15"], "17.5": ["21F79", "605.1.15"], "17.5.1": ["21F90", "605.1.15"], "17.6": ["21G80", "605.1.15"], "17.6.1": ["21G93", "605.1.15"], "17.7": ["21H16", "605.1.15"], "18.0": ["22A3354", "605.1.15"], "18.0.1": ["22A3370", "605.1.15"], "18.1": ["22B83", "605.1.15"], "18.1.1": ["22B91", "605.1.15"], "18.2": ["22C152", "605.1.15"], "18.2.1": ["22C161", "605.1.15"], "18.3": ["22D63", "605.1.15"], "18.3.1": ["22D72", "605.1.15"], "18.3.2": ["22D82", "605.1.15"], "18.4": ["22E240", "605.1.15"], "18.4.1": ["22E252", "605.1.15"], "18.5": ["22F76", "605.1.15"], "18.6": ["22G86", "605.1.15"], "18.6.1": ["22G90", "605.1.15"], "18.6.2": ["22G100", "605.1.15"], "26.0": ["23A341", "605.1.15"], "26.0.1": ["23A355", "605.1.15"], "26.1": ["23B85", "605.1.15"]}, "ANDROID_DEVICES": [["samsung", "SM-S918B", "dm3q", "qcom", 480, 1080, 2316, 13, 15, "arm64-v8a"], ["samsung", "SM-S911B", "dm1q", "qcom", 480, 1080, 2340, 13, 15, "arm64-v8a"], ["samsung", "SM-S928B", "e3q", "qcom", 480, 1080, 2340, 14, 15, "arm64-v8a"], ["samsung", "SM-S921B", "e1s", "s5e9945", 480, 1080, 2340, 14, 15, "arm64-v8a"], ["samsung", "SM-S908B", "b0q", "qcom", 480, 1080, 2316, 12, 14, "arm64-v8a"], ["samsung", "SM-S901B", "r0s", "s5e9925", 480, 1080, 2340, 12, 14, "arm64-v8a"], ["samsung", "SM-G991B", "o1s", "exynos2100", 420, 1080, 2400, 11, 14, "arm64-v8a"], ["samsung", "SM-A546B", "a54x", "s5e8835", 420, 1080, 2340, 13, 15, "arm64-v8a"], ["samsung", "SM-A346B", "a34x", "mt6877", 420, 1080, 2408, 13, 15, "arm64-v8a"], ["samsung", "SM-A525F", "a52q", "qcom", 420, 1080, 2400, 11, 14, "arm64-v8a"], ["samsung", "SM-A145F", "a14", "mt6769", 400, 1080, 2408, 13, 15, "arm64-v8a"], ["samsung", "SM-F731B", "b5q", "qcom", 420, 1080, 2640, 13, 15, "arm64-v8a"], ["motorola", "moto g84 5G", "bangkk", "qcom", 400, 1080, 2400, 13, 14, "arm64-v8a"], ["motorola", "moto g54 5G", "cancunf", "mt6855", 400, 1080, 2400, 13, 14, "arm64-v8a"], ["motorola", "motorola edge 40", "tundra", "mt6879", 400, 1080, 2400, 13, 14, "arm64-v8a"], ["motorola", "moto g stylus 5G (2023)", "genevn", "qcom", 400, 1080, 2400, 13, 14, "arm64-v8a"], ["motorola", "moto g 5G (2023)", "penang", "qcom", 280, 720, 1600, 13, 14, "arm64-v8a"]], "ANDROID_API": {"11": 30, "12": 31, "13": 33, "14": 34, "15": 35, "16": 36}, "ANDROID_BUILDS": {"11": ["RP1A.200720.012", "RP1A.201105.002", "RQ3A.210805.001.A1"], "12": ["SP1A.210812.016", "SP1A.210812.016.A", "SQ3A.220705.003"], "13": ["TP1A.220624.014", "TQ3A.230805.001", "TP1A.221005.002"], "14": ["UP1A.231005.007", "UQ1A.240205.002", "UP1A.231005.007.A1"], "15": ["AP3A.240905.015.A2", "AP4A.250205.002", "AP3A.241105.008"], "16": ["BP2A.250605.031.A3", "BP1A.250305.019"]}, "MOTO_BUILDS": {"13": ["T1SQS33.71-4-3", "T1TD33.88-30"], "14": ["U1TD34.89-5", "U1SQS34.94-79-2"]}, "FB_VERSIONS": [[430, "531590913", "15.0", "489352711", 11], [440, "575386826", "15.0", "532684121", 11], [450, "603220544", "15.0", "568112409", 11], [455, "618433990", "15.0", "581205233", 11], [460, "631552371", "15.0", "594876013", 11], [465, "645901127", "16.0", "607345890", 12], [470, "660284435", "16.0", "620418762", 12], [475, "674512903", "16.0", "633907245", 12]], "IG_VERSIONS": [[300, "468116501", "15.0", "479283104", 11], [310, "490347712", "15.0", "498715532", 11], [320, "510782116", "15.0", "517842690", 11], [330, "531902475", "15.0", "538116207", 11], [340, "552817903", "16.0", "559203871", 12], [350, "573408622", "16.0", "579646318", 12], [360, "594116037", "16.0", "600214975", 12]], "WEBVIEW": ["120.0.6099.230", "121.0.6167.178", "122.0.6261.119", "123.0.6312.99", "124.0.6367.82", "125.0.6422.165", "126.0.6478.122", "127.0.6533.103", "128.0.6613.88", "129.0.6668.81", "130.0.6723.58", "131.0.6778.135", "132.0.6834.163", "133.0.6943.137", "134.0.6998.135", "135.0.7049.111", "136.0.7103.125", "137.0.7151.115", "138.0.7204.179", "139.0.7258.158", "140.0.7339.207"], "COUNTRIES": {"US": ["United States", "en_US"], "GB": ["United Kingdom", "en_GB"], "CA": ["Canada", "en_US"], "AU": ["Australia", "en_GB"], "DE": ["Germany", "de_DE"], "FR": ["France", "fr_FR"], "IT": ["Italy", "it_IT"], "ES": ["Spain", "es_ES"], "NL": ["Netherlands", "nl_NL"], "SE": ["Sweden", "sv_SE"], "PL": ["Poland", "pl_PL"], "TR": ["Turkey", "tr_TR"], "RU": ["Russia", "ru_RU"], "BR": ["Brazil", "pt_BR"], "MX": ["Mexico", "es_LA"], "AR": ["Argentina", "es_LA"], "IN": ["India", "en_US"], "ID": ["Indonesia", "id_ID"], "JP": ["Japan", "ja_JP"], "KR": ["South Korea", "ko_KR"], "TH": ["Thailand", "th_TH"], "VN": ["Vietnam", "vi_VN"], "PH": ["Philippines", "en_US"], "MY": ["Malaysia", "ms_MY"], "EG": ["Egypt", "ar_AR"], "SA": ["Saudi Arabia", "ar_AR"], "AE": ["United Arab Emirates", "ar_AR"], "MA": ["Morocco", "ar_AR"], "NG": ["Nigeria", "en_US"], "ZA": ["South Africa", "en_US"]}, "DESKTOP_MAJORS": {"chrome": [138, 158], "edge": [138, 158], "firefox": [130, 157]}, "PC_BRANDS": ["HP", "MSI", "Acer", "ASUS", "Dell", "Lenovo"]};
+
+/* ---------- helpers ---------- */
+const R = {int:(a,b)=>a+Math.floor(Math.random()*(b-a+1)), pick:a=>a[Math.floor(Math.random()*a.length)]};
+const vn = v=>{const p=v.split('.').map(Number);return p[0]*1000+(p[1]||0)};
+const $ = id=>document.getElementById(id);
+function cyrb53(s){let h1=0xdeadbeef,h2=0x41c6ce57;for(let i=0;i<s.length;i++){const c=s.charCodeAt(i);h1=Math.imul(h1^c,2654435761);h2=Math.imul(h2^c,1597334677)}
+ h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return 4294967296*(2097151&h2)+(h1>>>0)}
+function toast(m){const t=$('toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.t);toast.t=setTimeout(()=>t.classList.remove('on'),1400)}
+function copy(text){return (navigator.clipboard?navigator.clipboard.writeText(text):Promise.reject()).catch(()=>{const a=document.createElement('textarea');a.value=text;document.body.appendChild(a);a.select();document.execCommand('copy');a.remove()})}
+
+/* ---------- state ---------- */
+const sel={mode:'facebook',android:new Set(),ios:new Set(),desk:new Set(),cc:new Set(Object.keys(D.COUNTRIES))};
+let rows=[], seen=new Set(), invalidCount=0;
+try{(JSON.parse(localStorage.getItem('uaPro.seen')||'[]')).forEach(x=>seen.add(x))}catch(e){}
+const saveSeen=()=>{try{localStorage.setItem('uaPro.seen',JSON.stringify([...seen]))}catch(e){}};
+const updHist=()=>$('hist').textContent=seen.size;
+
+/* ---------- generators (mirror of ua_generator.py) ---------- */
+const nearest=(tbl,major)=>tbl.reduce((b,x)=>Math.abs(x[0]-major)<Math.abs(b[0]-major)?x:b);
+const fbVer=m=>`${m}.0.0.${R.int(18,56)}.${R.int(60,125)}`;
+const igVer=m=>`${m}.0.0.${R.int(12,40)}.${R.int(60,125)}`;
+function locale(){const cc=R.pick([...sel.cc]);return [cc,D.COUNTRIES[cc][1]]}
+function chromeFull(o){ // Android Chrome / WebView version
+  if(o.custVer) return o.custVer;
+  return R.pick(D.WEBVIEW.slice(o.verMode==='recent'?-8:0));
+}
+function genIOS(kind,o){
+  let ph,vers,tries=0;
+  do{ph=R.pick(D.IPHONES);vers=Object.keys(D.IOS_BUILDS).filter(v=>vn(ph[2])<=vn(v)&&vn(v)<=vn(ph[3])&&(!o.iosSet.size||o.iosSet.has(+v.split('.')[0])))}while(!vers.length&&++tries<50);
+  if(!vers.length) return null;
+  const [id,name,,,w,h,sc]=ph, ios=R.pick(vers), [build,wk]=D.IOS_BUILDS[ios], us=ios.replace(/\./g,'_'), [cc,loc]=locale();
+  const head=`Mozilla/5.0 (iPhone; CPU iPhone OS ${us} like Mac OS X) AppleWebKit/${wk} (KHTML, like Gecko)`;
+  if(kind==='standard'){const p=ios.split('.');
+    return {cc,brand:'Apple',model:name,os:'iOS '+ios,app:'Safari',ua:`${head} Version/${p[0]}.${p[1]} Mobile/15E148 Safari/604.1`}}
+  if(kind==='facebook'){
+    const pool=D.FB_VERSIONS.filter(f=>vn(f[2])<=vn(ios)); const f=o.appVer?nearest(D.FB_VERSIONS,parseInt(o.appVer)):R.pick(pool);
+    return {cc,brand:'Apple',model:name,os:'iOS '+ios,app:'Facebook '+f[0],
+      ua:`${head} Mobile/${build} [FBAN/FBIOS;FBAV/${o.appVer||fbVer(f[0])};FBBV/${f[1]};FBDV/${id};FBMD/iPhone;FBSN/iOS;FBSV/${ios};FBLC/${loc};FBOP/5;FBRV/${R.int(700000000,799999999)}]`}}
+  const pool=D.IG_VERSIONS.filter(f=>vn(f[2])<=vn(ios)); const f=o.appVer?nearest(D.IG_VERSIONS,parseInt(o.appVer)):R.pick(pool);
+  return {cc,brand:'Apple',model:name,os:'iOS '+ios,app:'Instagram '+f[0],
+    ua:`${head} Mobile/${build} Instagram ${o.appVer||igVer(f[0])} (${id}; iOS ${us}; ${loc}; scale=${sc.toFixed(2)}; ${w}x${h}; ${f[1]})`}
+}
+function genAndroid(kind,o){
+  let d,avs,tries=0;
+  do{d=R.pick(D.ANDROID_DEVICES);avs=[];for(let v=d[7];v<=d[8];v++) if(!o.andSet.size||o.andSet.has(v)) avs.push(v)}while(!avs.length&&++tries<50);
+  if(!avs.length) return null;
+  const [brand,model,board,chip,dpi,w,h,,,abi]=d, av=R.pick(avs), api=D.ANDROID_API[av];
+  const code=R.pick((brand==='motorola'?D.MOTO_BUILDS:D.ANDROID_BUILDS)[av]), [cc,loc]=locale();
+  const B=brand[0].toUpperCase()+brand.slice(1);
+  if(kind==='standard'){
+    const full=o.reduced?`${parseInt(chromeFull(o))}.0.0.0`:chromeFull(o);
+    return {cc,brand:B,model,os:'Android '+av,app:'Chrome',ua:`Mozilla/5.0 (Linux; Android ${av}; ${model}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${full} Mobile Safari/537.36`}}
+  const head=`Mozilla/5.0 (Linux; Android ${av}; ${model} Build/${code}; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/${chromeFull(o)} Mobile Safari/537.36`;
+  if(kind==='facebook'){
+    const f=o.appVer?nearest(D.FB_VERSIONS,parseInt(o.appVer)):R.pick(D.FB_VERSIONS.filter(x=>x[4]<=av));
+    return {cc,brand:B,model,os:'Android '+av,app:'Facebook '+f[0],
+      ua:`${head} [FB_IAB/FB4A;FBAV/${o.appVer||fbVer(f[0])};FBBV/${f[3]};FBDV/${model};FBMD/${brand};FBSN/Android;FBSV/${av};FBLC/${loc};FBOP/1;FBCA/${abi}:;]`}}
+  const f=o.appVer?nearest(D.IG_VERSIONS,parseInt(o.appVer)):R.pick(D.IG_VERSIONS.filter(x=>x[4]<=av));
+  return {cc,brand:B,model,os:'Android '+av,app:'Instagram '+f[0],
+    ua:`${head} Instagram ${o.appVer||igVer(f[0])} Android (${api}/${av}; ${dpi}dpi; ${w}x${h}; ${brand}; ${model}; ${board}; ${chip}; ${loc}; ${f[3]})`}
+}
+function genDesktop(o){
+  const osList=o.deskSet.size?[...o.deskSet]:['win10','win11','macos','linux'], osk=R.pick(osList);
+  const br=o.browser||R.pick(['chrome','edge','firefox']), [lo,hi]=D.DESKTOP_MAJORS[br];
+  let major=R.int(o.verMode==='recent'?hi-7:lo,hi); if(o.custVer) major=parseInt(o.custVer);
+  const [cc]=locale(); let plat,fx,brand,model,os;
+  if(osk==='win10'||osk==='win11'){plat=fx='Windows NT 10.0; Win64; x64';brand=R.pick(D.PC_BRANDS);model='Windows PC';os=osk==='win10'?'Windows 10':'Windows 11'}
+  else if(osk==='macos'){plat='Macintosh; Intel Mac OS X 10_15_7';fx='Macintosh; Intel Mac OS X 10.15';brand='Apple';model='Mac';os='macOS'}
+  else {plat=fx='X11; Linux x86_64';brand='Generic';model='Linux PC';os='Linux'}
+  const name=br[0].toUpperCase()+br.slice(1);
+  if(br==='firefox') return {cc,brand,model,os,app:name+' '+major,ua:`Mozilla/5.0 (${fx}; rv:${major}.0) Gecko/20100101 Firefox/${major}.0`};
+  let full=o.reduced?`${major}.0.0.0`:(o.custVer&&o.custVer.split('.').length===4?o.custVer:`${major}.0.${R.int(6000,8200)}.${R.int(0,250)}`);
+  let ua=`Mozilla/5.0 (${plat}) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/${full} Safari/537.36`;
+  if(br==='edge') ua+=` Edg/${full}`;
+  return {cc,brand,model,os,app:name+' '+major,ua};
+}
+
+/* ---------- validators ---------- */
+const LOC='(?:[a-z]{2}_[A-Z]{2}|es_LA)';
+const IOSH='Mozilla/5\\.0 \\(iPhone; CPU iPhone OS \\d+_\\d+(?:_\\d+)? like Mac OS X\\) AppleWebKit/605\\.1\\.15 \\(KHTML, like Gecko\\)';
+const ANDH='Mozilla/5\\.0 \\(Linux; Android \\d+; [^;]+ Build/[A-Z0-9.\\-]+; wv\\) AppleWebKit/537\\.36 \\(KHTML, like Gecko\\) Version/4\\.0 Chrome/\\d+\\.0\\.\\d+\\.\\d+ Mobile Safari/537\\.36';
+const V=[
+ ['Facebook iOS',`^${IOSH} Mobile/[0-9][0-9A-Z]+ \\[FBAN/FBIOS;FBAV/\\d+(?:\\.\\d+){4};FBBV/\\d+;FBDV/iPhone\\d+,\\d+;FBMD/iPhone;FBSN/iOS;FBSV/\\d+(?:\\.\\d+){1,2};FBLC/${LOC};FBOP/5;FBRV/\\d+\\]$`],
+ ['Instagram iOS',`^${IOSH} Mobile/[0-9][0-9A-Z]+ Instagram \\d+(?:\\.\\d+){4} \\(iPhone\\d+,\\d+; iOS \\d+_\\d+(?:_\\d+)?; ${LOC}; scale=\\d\\.00; \\d+x\\d+; \\d+\\)$`],
+ ['Facebook Android',`^${ANDH} \\[FB_IAB/FB4A;FBAV/\\d+(?:\\.\\d+){4};FBBV/\\d+;FBDV/[^;]+;FBMD/[a-z]+;FBSN/Android;FBSV/\\d+;FBLC/${LOC};FBOP/1;FBCA/[a-z0-9\\-]+:;\\]$`],
+ ['Instagram Android',`^${ANDH} Instagram \\d+(?:\\.\\d+){4} Android \\(\\d+/\\d+; \\d+dpi; \\d+x\\d+; [a-z]+; [^;]+; [a-z0-9]+; [a-z0-9]+; ${LOC}; \\d+\\)$`],
+ ['Safari iOS',`^${IOSH} Version/\\d+\\.\\d+ Mobile/15E148 Safari/604\\.1$`],
+ ['Chrome Android',`^Mozilla/5\\.0 \\(Linux; Android \\d+; [^;]+\\) AppleWebKit/537\\.36 \\(KHTML, like Gecko\\) Chrome/\\d+\\.0\\.\\d+\\.\\d+ Mobile Safari/537\\.36$`],
+ ['Chrome / Edge desktop',`^Mozilla/5\\.0 \\((?:Windows NT 10\\.0; Win64; x64|Macintosh; Intel Mac OS X 10_15_7|X11; Linux x86_64)\\) AppleWebKit/537\\.36 \\(KHTML, like Gecko\\) Chrome/\\d+\\.0\\.\\d+\\.\\d+ Safari/537\\.36(?: Edg/\\d+\\.0\\.\\d+\\.\\d+)?$`],
+ ['Firefox desktop',`^Mozilla/5\\.0 \\((?:Windows NT 10\\.0; Win64; x64|Macintosh; Intel Mac OS X 10\\.15|X11; Linux x86_64); rv:\\d+\\.0\\) Gecko/20100101 Firefox/\\d+\\.0$`]
+].map(([n,r])=>[n,new RegExp(r)]);
+const validType=ua=>{for(const [n,r] of V) if(r.test(ua)) return n; return null};
+
+/* ---------- generate ---------- */
+function genOne(o){
+  const groups=[]; if(o.andSet.size) groups.push('a'); if(o.iosSet.size) groups.push('i'); if(o.deskSet.size) groups.push('d');
+  const g=R.pick(groups.length?groups:['a','i','d']);
+  if(g==='d') return genDesktop(o);
+  const kind=o.mode==='mixed'?R.pick(['facebook','instagram','standard']):o.mode;
+  return g==='a'?genAndroid(kind,o):genIOS(kind,o);
+}
+async function generate(){
+  const n=Math.max(1,Math.min(50000,parseInt($('count').value)||1));
+  if(!sel.cc.size){toast('Select at least one country');return}
+  const o={mode:sel.mode,andSet:sel.android,iosSet:sel.ios,deskSet:sel.desk,browser:$('browser').value,verMode:$('verMode').value,
+    custVer:$('custVer').value.trim(),appVer:$('appVer').value.trim(),reduced:$('reduced').checked};
+  $('gen').disabled=true; $('bar').style.display='block';
+  const t0=performance.now(); rows=[]; invalidCount=0;
+  let attempts=0; const max=n*40+2000; let chunk=0;
+  while(rows.length<n && attempts<max){
+    attempts++; const r=genOne(o); if(!r) continue;
+    const h=cyrb53(r.ua); if(seen.has(h)) continue;
+    if(!validType(r.ua)){invalidCount++;continue}
+    seen.add(h); rows.push(r);
+    if(++chunk>=2500){chunk=0;$('barI').style.width=(100*rows.length/n)+'%';await new Promise(f=>setTimeout(f))}
+  }
+  $('barI').style.width='100%'; saveSeen(); updHist();
+  render(((performance.now()-t0)/1000)); $('gen').disabled=false;
+  setTimeout(()=>{$('bar').style.display='none';$('barI').style.width='0'},500);
+  if(rows.length<n) toast(`Only ${rows.length} unique strings possible for this selection — widen options or reset history`);
+}
+function esc(s){return s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+function render(sec){
+  const show=rows.slice(0,500);
+  $('sTotal').textContent=rows.length; $('sShow').textContent=show.length; $('sTime').textContent=sec.toFixed(2)+'s'; $('sValid').textContent=`${rows.length}/${rows.length}`;
+  if(!rows.length){$('tableWrap').innerHTML='<div class="empty">No new unique strings available for this selection. Widen options or reset history.</div>';return}
+  let h='<table><thead><tr><th>#</th><th>CC</th><th>BRAND</th><th>MODEL</th><th>OS / VER</th><th>APP</th><th>USER AGENT STRING</th><th>OK</th><th></th></tr></thead><tbody>';
+  show.forEach((r,i)=>{h+=`<tr><td class="n">${String(i+1).padStart(5,'0')}</td><td>${r.cc}</td><td class="b">${esc(r.brand)}</td><td class="m">${esc(r.model)}</td><td><span class="tag">${esc(r.os)}</span></td><td>${esc(r.app)}</td><td>${esc(r.ua)}</td><td class="okc">✓</td><td><button class="cp" data-i="${i}">⧉</button></td></tr>`});
+  $('tableWrap').innerHTML=h+'</tbody></table>';
+}
+
+/* ---------- UI wiring ---------- */
+function chips(id,items,type){
+  const el=$(id); items.forEach(([key,label])=>{const b=document.createElement('button');b.className='chip';b.textContent=label;b.dataset.k=key;
+    if(type==='mode'&&key===sel.mode) b.classList.add('on');
+    b.onclick=()=>{
+      if(type==='mode'){sel.mode=key;[...el.children].forEach(c=>c.classList.toggle('on',c===b))}
+      else{const s=sel[type],k=type==='desk'?key:+key; s.has(k)?s.delete(k):s.add(k); b.classList.toggle('on',s.has(k))}
+      $('across').textContent=`across ${$('browser').value?1:3} browser${$('browser').value?'':'s'}`};
+    el.appendChild(b)})}
+chips('modeChips',[['standard','Standard'],['mixed','Mixed'],['facebook','Facebook'],['instagram','Instagram']],'mode');
+chips('andChips',[11,12,13,14,15,16].map(v=>[v,'Android '+v]),'android');
+chips('iosChips',[15,16,17,18,26].map(v=>[v,'iOS '+v]),'ios');
+chips('deskChips',[['win10','Windows 10'],['win11','Windows 11'],['macos','macOS'],['linux','Linux']],'desk');
+$('browser').onchange=()=>$('across').textContent=`across ${$('browser').value?1:3} browser${$('browser').value?'':'s'}`;
+[500,1000,5000,10000,20000,50000].forEach(n=>{const b=document.createElement('button');b.textContent=n>=1000?(n/1000)+'K':n;b.onclick=()=>$('count').value=n;$('quick').appendChild(b)});
+
+function drawCC(){
+  const q=$('ccSearch').value.toLowerCase(), el=$('ccList'); el.innerHTML='';
+  Object.entries(D.COUNTRIES).filter(([c,[n]])=>!q||c.toLowerCase().includes(q)||n.toLowerCase().includes(q)).forEach(([c,[n]])=>{
+    const d=document.createElement('div');d.className='cc'+(sel.cc.has(c)?' on':'');d.innerHTML=`<b>${c}</b><span>${n}</span>`;
+    d.onclick=()=>{sel.cc.has(c)?sel.cc.delete(c):sel.cc.add(c);drawCC()};el.appendChild(d)});
+  $('allBtn').classList.toggle('on',sel.cc.size===Object.keys(D.COUNTRIES).length);
+  $('allBtn').textContent=(sel.cc.size===Object.keys(D.COUNTRIES).length?'✓ ':'')+'ALL';
+}
+$('ccSearch').oninput=drawCC;
+$('allBtn').onclick=()=>{const all=Object.keys(D.COUNTRIES);sel.cc=sel.cc.size===all.length?new Set():new Set(all);drawCC()};
+drawCC();
+
+$('gen').onclick=generate;
+$('reset').onclick=()=>{if(confirm('Forget all previously generated strings? Repeats become possible again.')){seen=new Set();saveSeen();updHist();toast('History cleared')}};
+updHist();
+document.querySelectorAll('.tab').forEach(t=>t.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x===t));document.querySelectorAll('.page').forEach(p=>p.classList.toggle('on',p.id===t.dataset.p))});
+$('tableWrap').addEventListener('click',e=>{const b=e.target.closest('.cp');if(b){copy(rows[+b.dataset.i].ua).then(()=>toast('Copied'))}});
+$('copyAll').onclick=()=>{if(!rows.length)return toast('Nothing to copy');copy(rows.map(r=>r.ua).join('\n')).then(()=>toast(`Copied ${rows.length} user agents`))};
+$('exportTxt').onclick=()=>{if(!rows.length)return toast('Nothing to export');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([rows.map(r=>r.ua).join('\n')+'\n'],{type:'text/plain'}));a.download=`user_agents_${rows.length}.txt`;a.click();URL.revokeObjectURL(a.href)};
+
+/* ---------- analyser ---------- */
+$('anaBtn').onclick=()=>{
+  const lines=$('anaIn').value.split('\n').map(s=>s.trim()).filter(Boolean); let h='';
+  if(!lines.length){$('anaOut').innerHTML='<div class="empty">Paste a user agent first.</div>';return}
+  lines.slice(0,200).forEach(ua=>{
+    const t=validType(ua), g=(re,i=1)=>{const m=ua.match(re);return m?m[i]:'—'};
+    const iosv=g(/iPhone OS ([\d_]+)/).replace(/_/g,'.'), andv=g(/Android (\d+)/);
+    h+=`<div class="card"><h3>${t?'✓ VALID — '+t.toUpperCase():'✗ NOT MATCHING A KNOWN FORMAT'}</h3><div class="kv">
+     <span>Platform</span><div>${/iPhone/.test(ua)?'iOS '+iosv:/Android/.test(ua)?'Android '+andv:/Windows/.test(ua)?'Windows':/Mac/.test(ua)?'macOS':/Linux/.test(ua)?'Linux':'—'}</div>
+     <span>App</span><div>${/FBAN\/FBIOS|FB_IAB/.test(ua)?'Facebook '+g(/FBAV\/([\d.]+)/):/Instagram/.test(ua)?'Instagram '+g(/Instagram ([\d.]+)/):'regular browser'}</div>
+     <span>Device</span><div>${g(/FBDV\/([^;\]]+)/)!=='—'?g(/FBDV\/([^;\]]+)/):g(/\((iPhone\d+,\d+);/)!=='—'?g(/\((iPhone\d+,\d+);/):g(/Android \d+; ([^;)]+?)(?: Build|\))/)}</div>
+     <span>Build</span><div>${g(/Mobile\/([0-9A-Z]+)/)!=='—'?g(/Mobile\/([0-9A-Z]+)/):g(/Build\/([A-Z0-9.\-]+)/)}</div>
+     <span>Engine</span><div>${g(/(AppleWebKit\/[\d.]+|Gecko\/\d+)/)} ${g(/(Chrome\/[\d.]+)/)!=='—'?g(/(Chrome\/[\d.]+)/):''}</div>
+     <span>Locale</span><div>${g(/(?:FBLC\/|; )([a-z]{2}_[A-Z]{2}|es_LA)/)}</div>
+     <span>Seen before</span><div>${seen.has(cyrb53(ua))?'yes — generated by this tool in this browser':'no'}</div></div>
+     <div class="hint" style="word-break:break-all;margin-top:8px">${esc(ua)}</div></div>`});
+  $('anaOut').innerHTML=h};
+
+/* ---------- latest versions tab ---------- */
+(function(){
+  const tb=(t,head,rows)=>`<div class="card"><h3>${t}</h3><table><thead><tr>${head.map(x=>`<th>${x}</th>`).join('')}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map(x=>`<td>${x}</td>`).join('')}</tr>`).join('')}</tbody></table></div>`;
+  $('verOut').innerHTML='<div class="vgrid">'+
+   tb('FACEBOOK VERSIONS',['Major','iOS FBBV','Min iOS','Android FBBV','Min Android'],D.FB_VERSIONS)+
+   tb('INSTAGRAM VERSIONS',['Major','iOS code','Min iOS','Android code','Min Android'],D.IG_VERSIONS)+
+   tb('CHROME WEBVIEW (ANDROID)',['Version'],D.WEBVIEW.map(v=>[v]))+
+   tb('iOS → BUILD / WEBKIT',['iOS','Build','WebKit'],Object.entries(D.IOS_BUILDS).map(([k,[b,w]])=>[k,b,w]))+
+   tb('iPHONES',['Identifier','Model','iOS range','Resolution'],D.IPHONES.map(p=>[p[0],p[1],p[2]+' – '+p[3],p[4]+'x'+p[5]+' @'+p[6]+'x']))+
+   tb('ANDROID DEVICES',['Brand','Model','Board','Chipset','Android','DPI','Resolution'],D.ANDROID_DEVICES.map(d=>[d[0],d[1],d[2],d[3],d[7]+' – '+d[8],d[4],d[5]+'x'+d[6]]))+'</div>';
+})();
+</script>
+</body>
+</html>

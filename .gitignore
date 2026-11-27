@@ -1,0 +1,8 @@
+node_modules/
+backend/node_modules/
+.aws-sam/
+stack-outputs.json
+.env
+*.pem
+*.key
+artifacts/

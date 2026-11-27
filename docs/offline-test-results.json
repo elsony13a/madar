@@ -1,0 +1,15 @@
+{
+  "offline": true,
+  "isolatedSingleFile": true,
+  "fontsAndStyles": true,
+  "externalRequests": [],
+  "errors": [],
+  "savedCourse": true,
+  "privateNoteSaveReloadClear": true,
+  "questionPostReload": true,
+  "learnerReportPostReload": true,
+  "fixedSampleReviewAndAdoptionNoBedrock": true,
+  "quizPass": 100,
+  "completionRecordDownload": true,
+  "recordViewport320": true
+}

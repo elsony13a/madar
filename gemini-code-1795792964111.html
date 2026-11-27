@@ -1,0 +1,1250 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Global Rewards &amp; Digital Cards</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #07060b;
+      --glass: rgba(24, 20, 34, 0.62);
+      --line: rgba(255, 255, 255, 0.08);
+      --gold-line: rgba(245, 196, 81, 0.55);
+      --text: #fafaf9;
+      --muted: #a8a29e;
+      --gold: #f5c451;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        radial-gradient(ellipse 65% 42% at 15% 6%, rgba(245, 196, 81, 0.14), transparent 60%),
+        radial-gradient(ellipse 60% 45% at 85% 16%, rgba(217, 70, 239, 0.11), transparent 60%),
+        radial-gradient(ellipse 70% 50% at 50% 96%, rgba(20, 184, 166, 0.10), transparent 65%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Sticky Top Header + Live Review Bar */
+    .sticky-header {
+      position: sticky;
+      top: 0;
+      z-index: 120;
+      background: rgba(9, 8, 15, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .top-bar {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 8px 18px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 12px;
+      font-weight: 600;
+      color: #e7e5e4;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 196, 81, 0.14);
+      color: var(--gold);
+      border: 1px solid rgba(245, 196, 81, 0.35);
+      padding: 2px 9px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.7px;
+      white-space: nowrap;
+    }
+
+    .dot {
+      width: 6px;
+      height: 6px;
+      background: var(--gold);
+      border-radius: 50%;
+      box-shadow: 0 0 10px var(--gold);
+      animation: pulse 1.8s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.45); opacity: 0.45; }
+    }
+
+    .top-review-notif {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 9px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 12.5px;
+      transition: opacity 0.35s ease, transform 0.35s ease;
+    }
+
+    .top-review-notif.switching {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+
+    .notif-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+      flex-wrap: wrap;
+    }
+
+    .notif-badge {
+      background: rgba(245, 196, 81, 0.14);
+      color: var(--gold);
+      border: 1px solid rgba(245, 196, 81, 0.35);
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .notif-author {
+      font-weight: 700;
+      color: #ffffff;
+      white-space: nowrap;
+    }
+
+    .notif-meta {
+      color: var(--muted);
+      font-size: 11.5px;
+      white-space: nowrap;
+    }
+
+    .notif-quote {
+      color: #d6d3d1;
+      font-size: 12px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 420px;
+    }
+
+    .notif-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .notif-stars {
+      color: var(--gold);
+      font-size: 11.5px;
+      letter-spacing: 0.5px;
+    }
+
+    .notif-card-chip {
+      background: rgba(20, 184, 166, 0.14);
+      color: #5eead4;
+      border: 1px solid rgba(20, 184, 166, 0.32);
+      padding: 2px 9px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+
+    /* Hero */
+    .hero {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 46px 20px 24px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-size: clamp(32px, 4.8vw, 50px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(125deg, #ffffff 20%, #fde68a 58%, #f5c451 92%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-bottom: 8px;
+    }
+
+    .hero p {
+      color: var(--muted);
+      font-size: 15px;
+      font-weight: 500;
+    }
+
+    /* Grid */
+    .grid {
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 16px 20px 36px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(315px, 1fr));
+      gap: 24px;
+    }
+
+    /* Luxury Velvet Glass Card */
+    .card {
+      background: linear-gradient(155deg, rgba(255, 255, 255, 0.06) 0%, var(--glass) 100%);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid var(--line);
+      border-radius: 26px;
+      padding: 15px;
+      display: flex;
+      flex-direction: column;
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+    }
+
+    .card:hover {
+      transform: translateY(-7px);
+      border-color: var(--gold-line);
+      box-shadow: 0 26px 54px -14px rgba(0, 0, 0, 0.88), 0 0 30px rgba(245, 196, 81, 0.16);
+    }
+
+    /* Realistic Virtual Card */
+    .real-card {
+      border-radius: 20px;
+      padding: 20px;
+      color: #ffffff;
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1.62 / 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid rgba(255, 255, 255, 0.24);
+      box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.38), 0 14px 26px -8px rgba(0, 0, 0, 0.65);
+    }
+
+    .real-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(125deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.04) 44%, transparent 62%);
+      pointer-events: none;
+    }
+
+    .real-card::after {
+      content: "";
+      position: absolute;
+      width: 195px;
+      height: 195px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      bottom: -75px;
+      right: -55px;
+      pointer-events: none;
+    }
+
+    .skin-blue   { background: linear-gradient(135deg, #002875 0%, #0070e0 55%, #00164d 100%); }
+    .skin-green  { background: linear-gradient(135deg, #009922 0%, #00d632 52%, #053312 100%); }
+    .skin-sky    { background: linear-gradient(135deg, #005bb5 0%, #008cff 55%, #00244d 100%); }
+    .skin-dark   { background: linear-gradient(135deg, #27272a 0%, #18181b 55%, #09090b 100%); }
+    .skin-amber  { background: linear-gradient(135deg, #b45309 0%, #f59e0b 55%, #78350f 100%); }
+    .skin-rose   { background: linear-gradient(135deg, #be123c 0%, #f43f5e 55%, #881337 100%); }
+
+    .rc-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .brand-logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .card-stars {
+      display: inline-flex;
+      align-items: center;
+      gap: 2px;
+      background: rgba(0, 0, 0, 0.28);
+      backdrop-filter: blur(6px);
+      padding: 4px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      font-size: 11px;
+      color: var(--gold);
+      letter-spacing: 0.5px;
+    }
+
+    .rc-middle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: relative;
+      z-index: 2;
+    }
+
+    .emv-chip {
+      width: 40px;
+      height: 30px;
+      border-radius: 6px;
+      background: linear-gradient(135deg, #fef08a 0%, #eab308 50%, #a16207 100%);
+      border: 1px solid rgba(255, 255, 255, 0.45);
+      position: relative;
+      overflow: hidden;
+      box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.35);
+    }
+
+    .emv-chip::before {
+      content: "";
+      position: absolute;
+      inset: 6px 0;
+      border-top: 1px solid rgba(0, 0, 0, 0.28);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.28);
+    }
+
+    .emv-chip::after {
+      content: "";
+      position: absolute;
+      inset: 0 12px;
+      border-left: 1px solid rgba(0, 0, 0, 0.28);
+      border-right: 1px solid rgba(0, 0, 0, 0.28);
+    }
+
+    .rc-amount {
+      font-size: clamp(24px, 2.5vw, 34px);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+    }
+
+    .rc-amount small {
+      font-size: 11.5px;
+      font-weight: 700;
+      opacity: 0.9;
+      margin-left: 4px;
+    }
+
+    .rc-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 2;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.4px;
+      opacity: 0.92;
+    }
+
+    .rc-network {
+      font-size: 10.5px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      background: rgba(255, 255, 255, 0.18);
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .card-info {
+      padding: 18px 4px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .info-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .info-header h2 {
+      font-size: 17px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .left-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--gold);
+      background: rgba(245, 196, 81, 0.12);
+      border: 1px solid rgba(245, 196, 81, 0.3);
+      padding: 2px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .rating-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      color: var(--muted);
+    }
+
+    .stars-inline {
+      color: var(--gold);
+      letter-spacing: 1px;
+      font-size: 13px;
+    }
+
+    .rating-inline strong {
+      color: #f5f5f4;
+      font-weight: 700;
+      margin-left: 4px;
+    }
+
+    .verified {
+      color: #5eead4;
+      font-weight: 600;
+      font-size: 12px;
+    }
+
+    /* Transparent Glass Hover Buttons */
+    .claim-btn,
+    .final-btn,
+    .filter-btn {
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .claim-btn,
+    .final-btn {
+      width: 100%;
+      padding: 14px 18px;
+      border-radius: 15px;
+      font-size: 14.5px;
+      color: #161003;
+      background: linear-gradient(135deg, #fde68a 0%, #f5c451 55%, #d99b26 100%);
+      border: 1.5px solid transparent;
+      box-shadow: 0 8px 24px -6px rgba(245, 196, 81, 0.45);
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .claim-btn:hover,
+    .final-btn:hover {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-color: var(--gold);
+      color: #fde68a;
+      box-shadow: 0 0 26px rgba(245, 196, 81, 0.35), inset 0 0 12px rgba(245, 196, 81, 0.16);
+      transform: translateY(-2px);
+    }
+
+    .claim-btn:hover .arrow,
+    .final-btn:hover .arrow {
+      transform: translateX(4px);
+    }
+
+    .arrow {
+      transition: transform 0.25s ease;
+    }
+
+    /* Live Reviews Section */
+    .reviews-section {
+      max-width: 1180px;
+      width: 100%;
+      margin: 0 auto 64px;
+      padding: 0 20px;
+    }
+
+    .reviews-box {
+      background: linear-gradient(160deg, rgba(255, 255, 255, 0.05) 0%, rgba(22, 18, 32, 0.75) 100%);
+      backdrop-filter: blur(22px);
+      -webkit-backdrop-filter: blur(22px);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 28px 22px;
+    }
+
+    .reviews-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .reviews-title-wrap {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .reviews-title-wrap h2 {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+    }
+
+    .filter-group {
+      display: inline-flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-size: 12.5px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--line);
+    }
+
+    .filter-btn.active,
+    .filter-btn:hover {
+      background: rgba(245, 196, 81, 0.12);
+      border-color: var(--gold);
+      color: #fde68a;
+    }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(275px, 1fr));
+      gap: 18px;
+    }
+
+    .review-card {
+      background: rgba(10, 8, 16, 0.68);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      transition: border-color 0.25s ease, transform 0.25s ease;
+    }
+
+    .review-card:hover {
+      border-color: rgba(245, 196, 81, 0.35);
+      transform: translateY(-3px);
+    }
+
+    .rev-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .rev-user strong {
+      display: block;
+      font-size: 15px;
+      font-weight: 700;
+      color: #ffffff;
+    }
+
+    .rev-meta {
+      font-size: 11.5px;
+      color: var(--muted);
+      margin-top: 2px;
+    }
+
+    .gender-tag {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .gender-male {
+      background: rgba(96, 165, 250, 0.14);
+      color: #93c5fd;
+      border: 1px solid rgba(96, 165, 250, 0.3);
+    }
+
+    .gender-female {
+      background: rgba(244, 114, 182, 0.14);
+      color: #f9a8d4;
+      border: 1px solid rgba(244, 114, 182, 0.3);
+    }
+
+    .rev-stars {
+      color: var(--gold);
+      font-size: 13px;
+      letter-spacing: 1px;
+    }
+
+    .rev-text {
+      font-size: 13.5px;
+      color: #d6d3d1;
+      line-height: 1.5;
+      flex: 1;
+    }
+
+    .rev-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 11.5px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
+    }
+
+    .rev-card-badge {
+      color: #5eead4;
+      font-weight: 700;
+      background: rgba(20, 184, 166, 0.12);
+      border: 1px solid rgba(20, 184, 166, 0.28);
+      padding: 3px 9px;
+      border-radius: 8px;
+    }
+
+    .rev-live-time {
+      color: var(--muted);
+    }
+
+    /* Qualification Modal */
+    .backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 3, 8, 0.84);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 18px;
+      z-index: 300;
+    }
+
+    .backdrop.active {
+      display: flex;
+    }
+
+    .modal {
+      width: 100%;
+      max-width: 440px;
+      background: linear-gradient(165deg, rgba(28, 23, 42, 0.96), rgba(11, 9, 18, 0.98));
+      border: 1px solid rgba(245, 196, 81, 0.35);
+      border-radius: 26px;
+      padding: 24px 22px;
+      box-shadow: 0 30px 70px rgba(0, 0, 0, 0.85);
+      animation: pop 0.24s ease-out;
+    }
+
+    @keyframes pop {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .modal-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .step-badge {
+      font-size: 11px;
+      font-weight: 800;
+      color: var(--gold);
+      background: rgba(245, 196, 81, 0.14);
+      border: 1px solid rgba(245, 196, 81, 0.35);
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+
+    .close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 10px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 15px;
+      transition: all 0.2s ease;
+    }
+
+    .close-btn:hover {
+      background: transparent;
+      border-color: #f87171;
+      color: #fca5a5;
+    }
+
+    .bar {
+      width: 100%;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 20px;
+    }
+
+    .bar-fill {
+      height: 100%;
+      width: 33%;
+      background: linear-gradient(90deg, #f5c451, #5eead4);
+      transition: width 0.3s ease;
+    }
+
+    .q-title {
+      font-size: 20px;
+      font-weight: 800;
+      margin-bottom: 18px;
+      line-height: 1.3;
+    }
+
+    .opt-list {
+      display: flex;
+      flex-direction: column;
+      gap: 11px;
+    }
+
+    .opt-btn {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 14px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: all 0.25s ease;
+    }
+
+    .opt-yes {
+      background: rgba(245, 196, 81, 0.16);
+      color: #fde68a;
+      border: 1.5px solid rgba(245, 196, 81, 0.45);
+    }
+
+    .opt-yes:hover {
+      background: transparent;
+      border-color: var(--gold);
+      color: #ffffff;
+      box-shadow: 0 0 18px rgba(245, 196, 81, 0.25);
+    }
+
+    .opt-no {
+      background: rgba(255, 255, 255, 0.04);
+      color: #e7e5e4;
+      border: 1.5px solid rgba(255, 255, 255, 0.12);
+    }
+
+    .opt-no:hover {
+      background: transparent;
+      border-color: #fde68a;
+      color: #fde68a;
+      box-shadow: 0 0 18px rgba(245, 196, 81, 0.2);
+    }
+
+    .result-view {
+      display: none;
+      text-align: center;
+      padding: 6px 0;
+    }
+
+    .result-view.active {
+      display: block;
+    }
+
+    .ok-pill {
+      display: inline-block;
+      background: rgba(20, 184, 166, 0.16);
+      color: #5eead4;
+      border: 1px solid rgba(20, 184, 166, 0.35);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 11.5px;
+      font-weight: 800;
+      margin-bottom: 12px;
+    }
+
+    .result-view h3 {
+      font-size: 21px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 18px 16px 28px;
+      color: #78716c;
+      font-size: 11.5px;
+    }
+
+    @media (max-width: 768px) {
+      .notif-quote {
+        max-width: 220px;
+      }
+      .notif-right {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Sticky Top Header + Live Review Bar -->
+  <div class="sticky-header">
+    <div class="top-bar">
+      <span class="live-pill"><span class="dot"></span> <span id="countryBadge">LIVE: USA 🇺🇸</span></span>
+      <span id="programSubtitle">2026 Active Reward Program</span>
+    </div>
+
+    <div class="top-review-notif" id="topReviewNotif" aria-live="polite">
+      <div class="notif-left">
+        <span class="notif-badge">LIVE REVIEW</span>
+        <span class="notif-author" id="topRevName"></span>
+        <span class="notif-meta" id="topRevMeta"></span>
+        <span class="notif-quote" id="topRevText"></span>
+      </div>
+      <div class="notif-right">
+        <span class="notif-stars" id="topRevStars"></span>
+        <span class="notif-card-chip" id="topRevCard"></span>
+      </div>
+    </div>
+  </div>
+
+  <header class="hero">
+    <h1 id="heroTitle">USA Royal Rewards Hub</h1>
+    <p id="heroDesc">Select your card and complete quick verification.</p>
+  </header>
+
+  <main class="grid" id="cardsGrid"></main>
+
+  <!-- Live Reviews Section (Male & Female) -->
+  <section class="reviews-section">
+    <div class="reviews-box">
+      <div class="reviews-head">
+        <div class="reviews-title-wrap">
+          <span class="live-pill"><span class="dot"></span> LIVE REVIEWS</span>
+          <h2 id="reviewsHeading">Verified USA Member Reviews</h2>
+        </div>
+        <div class="filter-group" id="genderFilters">
+          <button type="button" class="filter-btn active" data-gender="ALL">All</button>
+          <button type="button" class="filter-btn" data-gender="Male">Male</button>
+          <button type="button" class="filter-btn" data-gender="Female">Female</button>
+        </div>
+      </div>
+
+      <div class="reviews-grid" id="reviewsGrid"></div>
+    </div>
+  </section>
+
+  <!-- Qualification Modal -->
+  <div class="backdrop" id="quizModal" role="dialog" aria-modal="true">
+    <div class="modal">
+      <div class="modal-top">
+        <span class="step-badge" id="stepLabel">Step 1 of 3</span>
+        <button type="button" class="close-btn" id="closeBtn">✕</button>
+      </div>
+      <div class="bar"><div class="bar-fill" id="barFill"></div></div>
+
+      <div id="questionBox">
+        <h3 class="q-title" id="qTitle"></h3>
+        <div class="opt-list" id="optList"></div>
+      </div>
+
+      <div class="result-view" id="resultBox">
+        <span class="ok-pill">✔ ELIGIBLE</span>
+        <h3 id="resTitle">Reward Ready</h3>
+        <a id="offerLink" href="https://auctionr.org/4/02a2d905d13c4f749299298a95f90f33" class="final-btn" rel="nofollow noopener">
+          Continue <span class="arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <footer id="footerNote">
+    18+ US Residents Only • Sponsor verification required.
+  </footer>
+
+  <script>
+    const OFFER_URL = "https://auctionr.org/4/02a2d905d13c4f749299298a95f90f33";
+
+    const countryData = {
+      US: {
+        badge: "LIVE: USA 🇺🇸",
+        heroTitle: "USA Royal Rewards Hub",
+        heroDesc: "Select your US card and complete quick verification.",
+        reviewsHeading: "Verified USA Member Reviews",
+        footer: "18+ US Residents Only • Sponsor verification required.",
+        residencyQuestion: "Do you currently reside in the United States?",
+        residencyYes: "Yes, I live in the USA (18+)",
+        residencyNo: "No, outside the United States",
+        cards: [
+          { brand: "PayPal", amount: "$1,000", currency: "USD", title: "$1,000 PayPal Cash", bottomLeft: "•••• •••• •••• 8420", network: "INSTANT", left: "2 Left", stars: "★★★★★", score: "4.9", skin: "skin-blue", sub: "us_paypal_1000" },
+          { brand: "Cash App", amount: "$750", currency: "USD", title: "$750 Cash App Card", bottomLeft: "$CASHTAG • USA", network: "CASH CARD", left: "3 Left", stars: "★★★★★", score: "4.9", skin: "skin-green", sub: "us_cashapp_750" },
+          { brand: "venmo", amount: "$500", currency: "USD", title: "$500 Venmo Balance", bottomLeft: "•••• •••• •••• 3914", network: "DEBIT", left: "3 Left", stars: "★★★★☆", score: "4.8", skin: "skin-sky", sub: "us_venmo_500" },
+          { brand: " Apple Card", amount: "$750", currency: "USD", title: "$750 Apple Gift Card", bottomLeft: "USA APPLE ID", network: "EGIFT", left: "2 Left", stars: "★★★★★", score: "4.9", skin: "skin-dark", sub: "us_apple_750" },
+          { brand: "Walmart ✳", amount: "$500", currency: "USD", title: "$500 Walmart Card", bottomLeft: "ALL U.S. STORES", network: "BARCODE", left: "4 Left", stars: "★★★★☆", score: "4.7", skin: "skin-amber", sub: "us_walmart_500" },
+          { brand: "◎ Target", amount: "$500", currency: "USD", title: "$500 Target Card", bottomLeft: "IN-STORE & ONLINE", network: "USA", left: "4 Left", stars: "★★★★★", score: "4.8", skin: "skin-rose", sub: "us_target_500" }
+        ],
+        reviews: [
+          { name: "Daniel Brooks", review: "Finished the quick sponsor step in a few minutes and got my Venmo & PayPal confirmation fast.", state: "Texas", country: "USA", gender: "Male", cardName: "$500 Venmo Balance", stars: "★★★★★", time: "2m ago" },
+          { name: "Lauren Mitchell", review: "Super clean process on my phone and worked smoothly for US residents.", state: "Florida", country: "USA", gender: "Female", cardName: "$750 Cash App Card", stars: "★★★★★", time: "6m ago" },
+          { name: "Kevin Patel", review: "Simple steps and clear instructions. No confusion at all from start to finish.", state: "California", country: "USA", gender: "Male", cardName: "$1,000 PayPal Cash", stars: "★★★★★", time: "11m ago" },
+          { name: "Rachel Hayes", review: "Completed the offer after work and received my confirmation details fast.", state: "Ohio", country: "USA", gender: "Female", cardName: "$750 Apple Gift Card", stars: "★★★★☆", time: "16m ago" }
+        ]
+      },
+      DE: {
+        badge: "LIVE: GERMANY 🇩🇪",
+        heroTitle: "Germany Royal Rewards Hub",
+        heroDesc: "Select your German card and complete quick verification.",
+        reviewsHeading: "Verified Germany Member Reviews",
+        footer: "18+ Germany Residents Only • Sponsor verification required.",
+        residencyQuestion: "Do you currently reside in Germany?",
+        residencyYes: "Yes, I live in Germany (18+)",
+        residencyNo: "No, outside Germany",
+        cards: [
+          { brand: "PayPal", amount: "€750", currency: "EUR", title: "€750 PayPal Guthaben", bottomLeft: "DE • SEPA & ONLINE", network: "INSTANT", left: "2 Left", stars: "★★★★★", score: "4.9", skin: "skin-blue", sub: "de_paypal_750" },
+          { brand: "Amazon.de", amount: "€500", currency: "EUR", title: "€500 Amazon.de Card", bottomLeft: "AMAZON.DE GUTSCHEIN", network: "EGIFT", left: "3 Left", stars: "★★★★★", score: "4.9", skin: "skin-amber", sub: "de_amazon_500" },
+          { brand: "MediaMarkt", amount: "€500", currency: "EUR", title: "€500 MediaMarkt Card", bottomLeft: "FILIALEN & ONLINE", network: "DEUTSCHLAND", left: "3 Left", stars: "★★★★☆", score: "4.8", skin: "skin-rose", sub: "de_mediamarkt_500" },
+          { brand: "Zalando", amount: "€300", currency: "EUR", title: "€300 Zalando Card", bottomLeft: "FASHION & LIFESTYLE", network: "VOUCHER", left: "4 Left", stars: "★★★★★", score: "4.8", skin: "skin-dark", sub: "de_zalando_300" },
+          { brand: " Apple Card", amount: "€500", currency: "EUR", title: "€500 Apple Gift Card", bottomLeft: "DE APPLE ACCOUNT", network: "EGIFT", left: "2 Left", stars: "★★★★★", score: "4.9", skin: "skin-sky", sub: "de_apple_500" },
+          { brand: "paysafecard", amount: "€250", currency: "EUR", title: "€250 Paysafecard", bottomLeft: "PREPAID DIGITAL PIN", network: "PIN", left: "3 Left", stars: "★★★★☆", score: "4.7", skin: "skin-green", sub: "de_paysafe_250" }
+        ],
+        reviews: [
+          { name: "Lukas Weber", review: "Quick verification and smooth card selection for Germany.", state: "Bavaria", country: "Germany", gender: "Male", cardName: "€750 PayPal Guthaben", stars: "★★★★★", time: "3m ago" },
+          { name: "Hannah Becker", review: "Worked right away on my mobile browser with clear steps.", state: "Berlin", country: "Germany", gender: "Female", cardName: "€500 Amazon.de Card", stars: "★★★★★", time: "7m ago" },
+          { name: "Tim Hoffmann", review: "Easy process and fast confirmation for German rewards.", state: "Hamburg", country: "Germany", gender: "Male", cardName: "€500 MediaMarkt Card", stars: "★★★★☆", time: "14m ago" },
+          { name: "Sophia Richter", review: "Clean design and straight to the point.", state: "North Rhine-Westphalia", country: "Germany", gender: "Female", cardName: "€300 Zalando Card", stars: "★★★★★", time: "21m ago" }
+        ]
+      },
+      GB: {
+        badge: "LIVE: UNITED KINGDOM 🇬🇧",
+        heroTitle: "UK Royal Rewards Hub",
+        heroDesc: "Select your UK card and complete quick verification.",
+        reviewsHeading: "Verified UK Member Reviews",
+        footer: "18+ UK Residents Only • Sponsor verification required.",
+        residencyQuestion: "Do you currently reside in the United Kingdom?",
+        residencyYes: "Yes, I live in the UK (18+)",
+        residencyNo: "No, outside the UK",
+        cards: [
+          { brand: "PayPal", amount: "£750", currency: "GBP", title: "£750 PayPal Cash", bottomLeft: "UK VERIFIED ACCOUNT", network: "INSTANT", left: "2 Left", stars: "★★★★★", score: "4.9", skin: "skin-blue", sub: "gb_paypal_750" },
+          { brand: "Amazon.co.uk", amount: "£500", currency: "GBP", title: "£500 Amazon UK Card", bottomLeft: "AMAZON.CO.UK EGIFT", network: "EGIFT", left: "3 Left", stars: "★★★★★", score: "4.9", skin: "skin-amber", sub: "gb_amazon_500" },
+          { brand: "Tesco", amount: "£250", currency: "GBP", title: "£250 Tesco Gift Card", bottomLeft: "UK STORES & GROCERIES", network: "RETAIL", left: "4 Left", stars: "★★★★☆", score: "4.8", skin: "skin-sky", sub: "gb_tesco_250" },
+          { brand: " Apple Card", amount: "£500", currency: "GBP", title: "£500 Apple Gift Card", bottomLeft: "UK APPLE ID", network: "EGIFT", left: "2 Left", stars: "★★★★★", score: "4.9", skin: "skin-dark", sub: "gb_apple_500" },
+          { brand: "John Lewis", amount: "£300", currency: "GBP", title: "£300 John Lewis Card", bottomLeft: "IN-STORE & ONLINE", network: "VOUCHER", left: "3 Left", stars: "★★★★☆", score: "4.7", skin: "skin-green", sub: "gb_johnlewis_300" },
+          { brand: "Deliveroo", amount: "£200", currency: "GBP", title: "£200 Deliveroo Card", bottomLeft: "FOOD & DELIVERY UK", network: "CREDIT", left: "4 Left", stars: "★★★★★", score: "4.8", skin: "skin-rose", sub: "gb_deliveroo_200" }
+        ],
+        reviews: [
+          { name: "Oliver Davies", review: "Smooth verification and quick access to UK reward options.", state: "London", country: "UK", gender: "Male", cardName: "£750 PayPal Cash", stars: "★★★★★", time: "4m ago" },
+          { name: "Amelia Wright", review: "Very straightforward on iPhone and quick to complete.", state: "Manchester", country: "UK", gender: "Female", cardName: "£500 Amazon UK Card", stars: "★★★★★", time: "9m ago" },
+          { name: "Jack Evans", review: "Clear steps and instant eligibility check.", state: "Birmingham", country: "UK", gender: "Male", cardName: "£250 Tesco Gift Card", stars: "★★★★☆", time: "15m ago" },
+          { name: "Charlotte Green", review: "Great experience from start to finish.", state: "Leeds", country: "UK", gender: "Female", cardName: "£500 Apple Gift Card", stars: "★★★★★", time: "25m ago" }
+        ]
+      },
+      FR: {
+        badge: "LIVE: FRANCE 🇫🇷",
+        heroTitle: "France Royal Rewards Hub",
+        heroDesc: "Select your France card and complete quick verification.",
+        reviewsHeading: "Verified France Member Reviews",
+        footer: "18+ France Residents Only • Sponsor verification required.",
+        residencyQuestion: "Do you currently reside in France?",
+        residencyYes: "Yes, I live in France (18+)",
+        residencyNo: "No, outside France",
+        cards: [
+          { brand: "PayPal", amount: "€750", currency: "EUR", title: "€750 PayPal Cash", bottomLeft: "FR COMPTE VÉRIFIÉ", network: "INSTANT", left: "2 Left", stars: "★★★★★", score: "4.9", skin: "skin-blue", sub: "fr_paypal_750" },
+          { brand: "Amazon.fr", amount: "€500", currency: "EUR", title: "€500 Amazon.fr Card", bottomLeft: "CARTE CADEAU FR", network: "EGIFT", left: "3 Left", stars: "★★★★★", score: "4.9", skin: "skin-amber", sub: "fr_amazon_500" },
+          { brand: "Carrefour", amount: "€300", currency: "EUR", title: "€300 Carrefour Card", bottomLeft: "MAGASINS & DRIVE FR", network: "RETAIL", left: "3 Left", stars: "★★★★☆", score: "4.8", skin: "skin-sky", sub: "fr_carrefour_300" },
+          { brand: " Apple Card", amount: "€500", currency: "EUR", title: "€500 Apple Gift Card", bottomLeft: "COMPTE APPLE FR", network: "EGIFT", left: "2 Left", stars: "★★★★★", score: "4.9", skin: "skin-dark", sub: "fr_apple_500" },
+          { brand: "Fnac", amount: "€300", currency: "EUR", title: "€300 Fnac Gift Card", bottomLeft: "TECH & CULTURE FR", network: "VOUCHER", left: "4 Left", stars: "★★★★☆", score: "4.7", skin: "skin-green", sub: "fr_fnac_300" },
+          { brand: "Sephora", amount: "€250", currency: "EUR", title: "€250 Sephora Card", bottomLeft: "BOUTIQUE & EN LIGNE", network: "EGIFT", left: "3 Left", stars: "★★★★★", score: "4.8", skin: "skin-rose", sub: "fr_sephora_250" }
+        ],
+        reviews: [
+          { name: "Lucas Moreau", review: "Simple steps and fast verification for France.", state: "Île-de-France", country: "France", gender: "Male", cardName: "€750 PayPal Cash", stars: "★★★★★", time: "5m ago" },
+          { name: "Camille Laurent", review: "Clean interface and worked smoothly on my phone.", state: "Provence-Alpes-Côte d'Azur", country: "France", gender: "Female", cardName: "€500 Amazon.fr Card", stars: "★★★★★", time: "10m ago" },
+          { name: "Enzo Bernard", review: "Quick check and easy to follow.", state: "Auvergne-Rhône-Alpes", country: "France", gender: "Male", cardName: "€300 Carrefour Card", stars: "★★★★☆", time: "18m ago" },
+          { name: "Léa Petit", review: "Very smooth process from beginning to end.", state: "Occitanie", country: "France", gender: "Female", cardName: "€500 Apple Gift Card", stars: "★★★★★", time: "27m ago" }
+        ]
+      },
+      ID: {
+        badge: "LIVE: INDONESIA 🇮🇩",
+        heroTitle: "Indonesia Royal Rewards Hub",
+        heroDesc: "Select your Indonesia card and complete quick verification.",
+        reviewsHeading: "Verified Indonesia Member Reviews",
+        footer: "18+ Indonesia Residents Only • Sponsor verification required.",
+        residencyQuestion: "Do you currently reside in Indonesia?",
+        residencyYes: "Yes, I live in Indonesia (18+)",
+        residencyNo: "No, outside Indonesia",
+        cards: [
+          { brand: "DANA", amount: "Rp 5M", currency: "IDR", title: "Rp 5,000,000 DANA Balance", bottomLeft: "ID E-WALLET INSTANT", network: "INSTANT", left: "2 Left", stars: "★★★★★", score: "4.9", skin: "skin-sky", sub: "id_dana_5m" },
+          { brand: "GoPay", amount: "Rp 3M", currency: "IDR", title: "Rp 3,000,000 GoPay Saldo", bottomLeft: "GOJEK & ONLINE ID", network: "WALLET", left: "3 Left", stars: "★★★★★", score: "4.9", skin: "skin-green", sub: "id_gopay_3m" },
+          { brand: "ShopeePay", amount: "Rp 3M", currency: "IDR", title: "Rp 3,000,000 ShopeePay", bottomLeft: "SHOPEE INDONESIA", network: "EGIFT", left: "3 Left", stars: "★★★★☆", score: "4.8", skin: "skin-amber", sub: "id_shopeepay_3m" },
+          { brand: "OVO", amount: "Rp 2.5M", currency: "IDR", title: "Rp 2,500,000 OVO Cash", bottomLeft: "MERCHANT & ONLINE ID", network: "CASH", left: "4 Left", stars: "★★★★★", score: "4.8", skin: "skin-blue", sub: "id_ovo_2_5m" },
+          { brand: " Apple Card", amount: "Rp 5M", currency: "IDR", title: "Rp 5,000,000 Apple Card", bottomLeft: "INDONESIA APPLE ID", network: "EGIFT", left: "2 Left", stars: "★★★★★", score: "4.9", skin: "skin-dark", sub: "id_apple_5m" },
+          { brand: "Tokopedia", amount: "Rp 2M", currency: "IDR", title: "Rp 2,000,000 Tokopedia Card", bottomLeft: "ALL INDONESIA ONLINE", network: "VOUCHER", left: "4 Left", stars: "★★★★☆", score: "4.7", skin: "skin-rose", sub: "id_tokopedia_2m" }
+        ],
+        reviews: [
+          { name: "Rizky Pratama", review: "Proses cepat di HP dan langsung muncul pilihan kartu untuk Indonesia.", state: "Jakarta", country: "Indonesia", gender: "Male", cardName: "Rp 5,000,000 DANA Balance", stars: "★★★★★", time: "2m ago" },
+          { name: "Ayu Lestari", review: "Langkahnya simpel dan mudah diikuti dari awal sampai selesai.", state: "Bandung", country: "Indonesia", gender: "Female", cardName: "Rp 3,000,000 GoPay Saldo", stars: "★★★★★", time: "6m ago" },
+          { name: "Dimas Saputra", review: "Verifikasinya cepat dan tampilannya rapi di layar ponsel.", state: "Surabaya", country: "Indonesia", gender: "Male", cardName: "Rp 3,000,000 ShopeePay", stars: "★★★★☆", time: "12m ago" },
+          { name: "Nadia Putri", review: "Sangat praktis dan langsung sesuai lokasi di Indonesia.", state: "Yogyakarta", country: "Indonesia", gender: "Female", cardName: "Rp 2,500,000 OVO Cash", stars: "★★★★★", time: "19m ago" }
+        ]
+      }
+    };
+
+    const allowedCountries = ["US", "DE", "GB", "FR", "ID"];
+    let activeCountry = "US";
+    let currentFilter = "ALL";
+    let topRevIndex = 0;
+
+    const cardsGrid = document.getElementById("cardsGrid");
+    const reviewsGrid = document.getElementById("reviewsGrid");
+    const topNotif = document.getElementById("topReviewNotif");
+
+    function renderCards() {
+      const cfg = countryData[activeCountry];
+      document.getElementById("countryBadge").textContent = cfg.badge;
+      document.getElementById("heroTitle").textContent = cfg.heroTitle;
+      document.getElementById("heroDesc").textContent = cfg.heroDesc;
+      document.getElementById("reviewsHeading").textContent = cfg.reviewsHeading;
+      document.getElementById("footerNote").textContent = cfg.footer;
+
+      cardsGrid.innerHTML = cfg.cards.map(c => `
+        <article class="card">
+          <div class="real-card ${c.skin}">
+            <div class="rc-top">
+              <div class="brand-logo">${c.brand}</div>
+              <span class="card-stars">${c.stars}</span>
+            </div>
+            <div class="rc-middle">
+              <div class="emv-chip"></div>
+              <div class="rc-amount">${c.amount}<small>${c.currency}</small></div>
+            </div>
+            <div class="rc-bottom">
+              <span>${c.bottomLeft}</span>
+              <span class="rc-network">${c.network}</span>
+            </div>
+          </div>
+          <div class="card-info">
+            <div class="info-header">
+              <h2>${c.title}</h2>
+              <span class="left-tag">${c.left}</span>
+            </div>
+            <div class="rating-row">
+              <span class="rating-inline"><span class="stars-inline">${c.stars}</span> <strong>${c.score}</strong></span>
+              <span class="verified">✔ Verified</span>
+            </div>
+            <button type="button" class="claim-btn" data-reward="${c.title}" data-default-sub="${c.sub}">
+              Claim ${c.amount} <span class="arrow">→</span>
+            </button>
+          </div>
+        </article>
+      `).join("");
+
+      bindClaimButtons();
+    }
+
+    function renderReviews() {
+      const cfg = countryData[activeCountry];
+      const list = currentFilter === "ALL"
+        ? cfg.reviews
+        : cfg.reviews.filter(r => r.gender === currentFilter);
+
+      reviewsGrid.innerHTML = list.map(r => `
+        <article class="review-card">
+          <div class="rev-top">
+            <div class="rev-user">
+              <strong>${r.name}</strong>
+              <div class="rev-meta">${r.state}, ${r.country}</div>
+            </div>
+            <span class="gender-tag ${r.gender === "Male" ? "gender-male" : "gender-female"}">${r.gender}</span>
+          </div>
+          <div class="rev-stars">${r.stars}</div>
+          <p class="rev-text">"${r.review}"</p>
+          <div class="rev-footer">
+            <span class="rev-card-badge">${r.cardName}</span>
+            <span class="rev-live-time">${r.time}</span>
+          </div>
+        </article>
+      `).join("");
+    }
+
+    function updateTopReview() {
+      const list = countryData[activeCountry].reviews;
+      const item = list[topRevIndex % list.length];
+      document.getElementById("topRevName").textContent = item.name;
+      document.getElementById("topRevMeta").textContent = `(${item.gender} • ${item.state}, ${item.country})`;
+      document.getElementById("topRevText").textContent = `"${item.review}"`;
+      document.getElementById("topRevStars").textContent = item.stars;
+      document.getElementById("topRevCard").textContent = item.cardName;
+    }
+
+    function setCountry(code) {
+      if (!allowedCountries.includes(code)) return;
+      activeCountry = code;
+      topRevIndex = 0;
+      renderCards();
+      renderReviews();
+      updateTopReview();
+    }
+
+    // Automatic visitor country detection by IP (US, DE, GB, FR, ID)
+    async function detectVisitorCountryByIP() {
+      try {
+        const res = await fetch("https://ipapi.co/country/", { cache: "no-store" });
+        const code = (await res.text()).trim().toUpperCase();
+        if (allowedCountries.includes(code)) {
+          setCountry(code);
+        } else {
+          setCountry("US");
+        }
+      } catch (_) {
+        setCountry("US");
+      }
+    }
+
+    document.querySelectorAll(".filter-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+        btn.classList.add("active");
+        currentFilter = btn.dataset.gender;
+        renderReviews();
+      });
+    });
+
+    setInterval(() => {
+      const list = countryData[activeCountry].reviews;
+      topNotif.classList.add("switching");
+      setTimeout(() => {
+        topRevIndex = (topRevIndex + 1) % list.length;
+        updateTopReview();
+        topNotif.classList.remove("switching");
+      }, 320);
+    }, 4500);
+
+    // Qualification Modal
+    const modal = document.getElementById("quizModal");
+    const stepLabel = document.getElementById("stepLabel");
+    const barFill = document.getElementById("barFill");
+    const questionBox = document.getElementById("questionBox");
+    const qTitle = document.getElementById("qTitle");
+    const optList = document.getElementById("optList");
+    const resultBox = document.getElementById("resultBox");
+    const resTitle = document.getElementById("resTitle");
+    const offerLink = document.getElementById("offerLink");
+
+    let step = 0;
+    let activeReward = "";
+    let defaultSub = "";
+
+    function getQuestionsForCountry() {
+      const cfg = countryData[activeCountry];
+      return [
+        {
+          q: cfg.residencyQuestion,
+          opts: [
+            { text: cfg.residencyYes, yes: true },
+            { text: cfg.residencyNo, yes: false }
+          ]
+        },
+        {
+          q: "Which device are you using right now?",
+          opts: [
+            { text: "Mobile (iOS / Android)", yes: true },
+            { text: "Desktop / Laptop", yes: false }
+          ]
+        },
+        {
+          q: "Ready to complete 1 quick sponsor step?",
+          opts: [
+            { text: "Yes, continue now", yes: true },
+            { text: "Not right now", yes: false }
+          ]
+        }
+      ];
+    }
+
+    function buildFinalOfferUrl() {
+      const incomingSub = new URLSearchParams(window.location.search).get("subsource");
+      const url = new URL(OFFER_URL);
+      url.searchParams.set("subsource", incomingSub || defaultSub);
+      return url.toString();
+    }
+
+    function renderStep() {
+      const questions = getQuestionsForCountry();
+      const current = questions[step];
+      stepLabel.textContent = `Step ${step + 1} of ${questions.length}`;
+      barFill.style.width = `${((step + 1) / questions.length) * 100}%`;
+      qTitle.textContent = current.q;
+      optList.innerHTML = "";
+
+      current.opts.forEach(o => {
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = `opt-btn ${o.yes ? "opt-yes" : "opt-no"}`;
+        b.innerHTML = `<span>${o.text}</span><span>›</span>`;
+        b.onclick = () => {
+          if (step < questions.length - 1) {
+            step++;
+            renderStep();
+          } else {
+            questionBox.style.display = "none";
+            stepLabel.textContent = "Verified";
+            barFill.style.width = "100%";
+            resTitle.textContent = activeReward;
+            offerLink.href = buildFinalOfferUrl();
+            resultBox.classList.add("active");
+          }
+        };
+        optList.appendChild(b);
+      });
+    }
+
+    function bindClaimButtons() {
+      document.querySelectorAll(".claim-btn").forEach(btn => {
+        btn.onclick = () => {
+          activeReward = btn.dataset.reward;
+          defaultSub = btn.dataset.defaultSub;
+          step = 0;
+          resultBox.classList.remove("active");
+          questionBox.style.display = "block";
+          renderStep();
+          modal.classList.add("active");
+        };
+      });
+    }
+
+    document.getElementById("closeBtn").onclick = () => modal.classList.remove("active");
+    modal.onclick = e => { if (e.target === modal) modal.classList.remove("active"); };
+
+    setCountry("US");
+    detectVisitorCountryByIP();
+  </script>
+</body>
+</html>

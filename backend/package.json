@@ -1,0 +1,15 @@
+{
+  "name": "madar-backend",
+  "version": "5.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@aws-sdk/client-bedrock-runtime": "^3.1173.0",
+    "@aws-sdk/client-dynamodb": "^3.1000.0",
+    "@aws-sdk/client-s3": "^3.1000.0",
+    "@aws-sdk/lib-dynamodb": "^3.1000.0",
+    "@aws-sdk/s3-presigned-post": "^3.1000.0",
+    "@aws-sdk/s3-request-presigner": "^3.1000.0",
+    "aws-jwt-verify": "^5.1.1"
+  }
+}

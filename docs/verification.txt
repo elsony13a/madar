@@ -1,0 +1,72 @@
+Madar v5 consolidated verification
+Prepared 20 November 2026
+
+PASS: 57 backend tests, including all previous security checks.
+V3 coverage: per-user notes, enrollment/lesson/length checks, question eligibility,
+course-owner replies, foreign-course denial, admin hide/restore, hidden-thread
+filtering and own-course instructor aggregates without invented revenue.
+V4 coverage: pending submissions excluded from catalogue/enrollment; locked
+content/metadata; separate verified admin review; explicit content check and
+note; rejection/withdrawal; stale submission ID denial; exact submitted video
+version retention; absent/null S3 version rejection for videos and receipts;
+report enrollment and shape checks; verified reporter identity and private lists;
+admin-only conditional resolution; no implicit content/access/refund effects;
+and server-owned discussion snapshots that survive later instructor replies.
+Earlier payment, quiz, completion-record, review and metadata tests still pass.
+
+V5 adds 12 deterministic tests using a stubbed generator, never real Bedrock:
+disabled/consent gates, instructor ownership/draft state, saved text-only payload,
+no caller prompt/model override or learner records, duplicate-ID reuse, malformed
+JSON/schema failure, provider failure without retry/leak, instructor/global caps,
+reviewed adoption, stale draft denial, source/video/count limits and duplicate
+concurrent reservation. These are not model-quality or live AWS tests.
+
+PASS: 55 browser check groups at 320, 390 and 1280 px.
+Added publication submit/withdraw/return/approve, bilingual private-content and
+quiz-key review, approval confirmation gate, course/discussion reports, escaped
+HTML-like report text, owner resolution and Arabic own-report status. Earlier
+catalogue, student, instructor, receipt approval, quizzes, completion record,
+reviews, saved courses, notes and Q&A journeys remain covered.
+V5 adds fixed-sample setup, review/discard, required confirmations, adoption
+into an editable quiz and Arabic simulation screens. No model was called.
+No page errors or horizontal page overflow were reported in these checks.
+Final mobile/desktop pixels inspected, including lower review controls and
+reported-discussion snapshot after spacing and mixed-language corrections.
+
+PASS: isolated standalone HTML with all networking disabled.
+Fonts, styles and JS embedded; no external network requests. Fixed sample
+review/adoption/editing also works offline, explicitly not a Bedrock response. Note save/reload/
+clear, question post/reload, learner report post/reload, saved course, progress,
+quiz pass, completion-record download and Arabic UI pass. Downloaded record
+has no horizontal overflow at 320 px. The app delivers printable HTML, not an
+automatic PDF service. Demo data/roles share this browser and are editable.
+
+PASS: frontend production build and bundled Node.js 22 backend build.
+PASS: bundled backend missing-token smoke returns 401 with synthetic local
+configuration, before any database or network access.
+PASS: local SAM/CloudFormation cfn-lint schema/transform validation.
+PASS: dependency audits reported 0 known vulnerabilities for root and backend
+at preparation time. This is not a security certification.
+PASS: final source ZIP was extracted to a fresh directory, dependencies installed
+from locks, and backend/browser/offline checks plus both builds repeated.
+
+NOT RUN: actual AWS deployment or real Cognito/JWT end-to-end; live DynamoDB/S3
+permissions, CORS, upload/playback and CloudFront delivery; real service costs;
+real transfers, settlement, refunds or payouts; production penetration testing;
+independent identity, watch-time or accredited assessment verification.
+
+No AWS resource was created, changed or deleted. No money moved.
+Default frontend mode is demo. Template PaymentMode is disabled.
+New source submissions need a separate owner review; old published records
+remain published. Published title/description/price edits are not re-reviewed.
+Human content review is not malware scanning or legal clearance. Report
+resolution is a note, not content removal, access revocation or a refund.
+Notes/reports are not end-to-end encrypted. Local roles share all browser data.
+Completion records are self-paced, not accredited or independently verified.
+
+V5 Bedrock: disabled by default, model and region empty. Optional conditional
+IAM permission is scoped to the configured foundation model only. SAM lint
+passed with the new parameters/rule/condition. Real Converse inference, model
+access/subscription, quality, pricing, region support and data settings remain
+unverified. No Marketplace operation, model call, cloud mutation or spending
+was performed. Daily request/token caps are not a money budget.

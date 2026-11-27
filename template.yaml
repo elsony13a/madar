@@ -1,0 +1,374 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Madar learning starter. Creates billable resources only if you explicitly deploy.
+Parameters:
+  FrontendOrigin:
+    Type: String
+    Default: http://localhost:8080
+    Description: Exact origin without trailing slash. Use HTTPS in production.
+  CallbackUrl:
+    Type: String
+    Default: http://localhost:8080/
+  LogoutUrl:
+    Type: String
+    Default: http://localhost:8080/
+  CognitoDomainPrefix:
+    Type: String
+    AllowedPattern: "[a-z0-9][a-z0-9-]{2,50}"
+    Description: Choose a unique Cognito hosted-login domain prefix.
+  PaymentMode:
+    Type: String
+    Default: disabled
+    AllowedValues: [disabled, test, manual]
+    Description: test uses synthetic receipts and no transfers. manual needs your own instructions.
+  ManualPaymentInstructions:
+    Type: String
+    Default: ""
+    Description: Leave empty to DISABLE real paid-course requests. Never enter credentials.
+  BedrockEnabled:
+    Type: String
+    Default: "false"
+    AllowedValues: ["false", "true"]
+    Description: Opt-in only after approving model access, region, data handling and costs.
+  BedrockRegion:
+    Type: String
+    Default: ""
+    AllowedPattern: "^$|^[a-z]{2}-[a-z]+-[0-9]+$"
+    Description: Explicit region for an in-region Converse-compatible foundation model. No inference profiles.
+  BedrockModelId:
+    Type: String
+    Default: ""
+    AllowedPattern: "^$|^[a-z0-9][a-z0-9.:-]{2,150}$"
+    Description: Explicit base foundation model ID, not ARN or cross-region profile. Check current Converse/system support and pricing.
+Rules:
+  BedrockActivationRequiresConfiguration:
+    Assertions:
+      - Assert:
+          !Or [
+            !Equals [!Ref BedrockEnabled, "false"],
+            !And [
+              !Not [!Equals [!Ref BedrockRegion, ""]],
+              !Not [!Equals [!Ref BedrockModelId, ""]],
+            ],
+          ]
+        AssertDescription: Enabling Bedrock requires an explicit region and model ID.
+Conditions:
+  UseBedrock: !Equals [!Ref BedrockEnabled, "true"]
+Resources:
+  WebsiteBucket:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      PublicAccessBlockConfiguration:
+        {
+          BlockPublicAcls: true,
+          BlockPublicPolicy: true,
+          IgnorePublicAcls: true,
+          RestrictPublicBuckets: true,
+        }
+      OwnershipControls:
+        Rules: [{ ObjectOwnership: BucketOwnerEnforced }]
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: { SSEAlgorithm: AES256 }
+  WebsiteOAC:
+    Type: AWS::CloudFront::OriginAccessControl
+    Properties:
+      OriginAccessControlConfig:
+        Name: !Sub "${AWS::StackName}-website"
+        OriginAccessControlOriginType: s3
+        SigningBehavior: always
+        SigningProtocol: sigv4
+  WebsiteHeaders:
+    Type: AWS::CloudFront::ResponseHeadersPolicy
+    Properties:
+      ResponseHeadersPolicyConfig:
+        Name: !Sub "${AWS::StackName}-headers"
+        SecurityHeadersConfig:
+          ContentTypeOptions: { Override: true }
+          FrameOptions: { FrameOption: DENY, Override: true }
+          ReferrerPolicy:
+            { ReferrerPolicy: strict-origin-when-cross-origin, Override: true }
+          StrictTransportSecurity:
+            {
+              AccessControlMaxAgeSec: 31536000,
+              IncludeSubdomains: false,
+              Preload: false,
+              Override: true,
+            }
+          ContentSecurityPolicy:
+            Override: true
+            ContentSecurityPolicy: "default-src 'self'; connect-src 'self' https://*.amazonaws.com https://*.amazoncognito.com; img-src 'self' data: https://*.amazonaws.com; media-src 'self' https://*.amazonaws.com; font-src 'self'; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'; base-uri 'self'; object-src 'none'"
+  WebsiteDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Enabled: true
+        DefaultRootObject: index.html
+        HttpVersion: http2and3
+        PriceClass: PriceClass_100
+        Origins:
+          - Id: website
+            DomainName: !GetAtt WebsiteBucket.RegionalDomainName
+            OriginAccessControlId: !Ref WebsiteOAC
+            S3OriginConfig: { OriginAccessIdentity: "" }
+        DefaultCacheBehavior:
+          TargetOriginId: website
+          ViewerProtocolPolicy: redirect-to-https
+          AllowedMethods: [GET, HEAD]
+          CachedMethods: [GET, HEAD]
+          Compress: true
+          ResponseHeadersPolicyId: !Ref WebsiteHeaders
+          ForwardedValues: { QueryString: false, Cookies: { Forward: none } }
+          MinTTL: 0
+          DefaultTTL: 300
+          MaxTTL: 86400
+        ViewerCertificate: { CloudFrontDefaultCertificate: true }
+  WebsitePolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref WebsiteBucket
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: { Service: cloudfront.amazonaws.com }
+            Action: s3:GetObject
+            Resource: !Sub "${WebsiteBucket.Arn}/*"
+            Condition:
+              StringEquals:
+                AWS:SourceArn: !Sub "arn:${AWS::Partition}:cloudfront::${AWS::AccountId}:distribution/${WebsiteDistribution}"
+          - Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource: [!GetAtt WebsiteBucket.Arn, !Sub "${WebsiteBucket.Arn}/*"]
+            Condition: { Bool: { "aws:SecureTransport": false } }
+  Users:
+    Type: AWS::Cognito::UserPool
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      UserPoolTier: LITE
+      UsernameAttributes: [email]
+      AutoVerifiedAttributes: [email]
+      UsernameConfiguration: { CaseSensitive: false }
+      Policies:
+        PasswordPolicy:
+          {
+            MinimumLength: 12,
+            RequireLowercase: true,
+            RequireUppercase: true,
+            RequireNumbers: true,
+            RequireSymbols: true,
+          }
+  UserClient:
+    Type: AWS::Cognito::UserPoolClient
+    Properties:
+      UserPoolId: !Ref Users
+      GenerateSecret: false
+      PreventUserExistenceErrors: ENABLED
+      AllowedOAuthFlowsUserPoolClient: true
+      AllowedOAuthFlows: [code]
+      AllowedOAuthScopes: [openid, email, profile]
+      SupportedIdentityProviders: [COGNITO]
+      CallbackURLs:
+        [!Ref CallbackUrl, !Sub "https://${WebsiteDistribution.DomainName}/"]
+      LogoutURLs:
+        [!Ref LogoutUrl, !Sub "https://${WebsiteDistribution.DomainName}/"]
+      AccessTokenValidity: 15
+      IdTokenValidity: 15
+      RefreshTokenValidity: 1
+      TokenValidityUnits:
+        { AccessToken: minutes, IdToken: minutes, RefreshToken: days }
+      EnableTokenRevocation: true
+  LoginDomain:
+    Type: AWS::Cognito::UserPoolDomain
+    Properties:
+      ManagedLoginVersion: 1
+      Domain: !Ref CognitoDomainPrefix
+      UserPoolId: !Ref Users
+  AdminGroup:
+    Type: AWS::Cognito::UserPoolGroup
+    Properties:
+      GroupName: MadarAdmins
+      Description: Owner-assigned only. Never selectable from sign-up.
+      UserPoolId: !Ref Users
+  Data:
+    Type: AWS::DynamoDB::Table
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - { AttributeName: PK, AttributeType: S }
+        - { AttributeName: SK, AttributeType: S }
+      KeySchema:
+        - { AttributeName: PK, KeyType: HASH }
+        - { AttributeName: SK, KeyType: RANGE }
+      SSESpecification: { SSEEnabled: true }
+      PointInTimeRecoverySpecification: { PointInTimeRecoveryEnabled: true }
+  PrivateFiles:
+    Type: AWS::S3::Bucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      PublicAccessBlockConfiguration:
+        {
+          BlockPublicAcls: true,
+          BlockPublicPolicy: true,
+          IgnorePublicAcls: true,
+          RestrictPublicBuckets: true,
+        }
+      OwnershipControls:
+        Rules: [{ ObjectOwnership: BucketOwnerEnforced }]
+      VersioningConfiguration: { Status: Enabled }
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault: { SSEAlgorithm: AES256 }
+      CorsConfiguration:
+        CorsRules:
+          - AllowedOrigins:
+              [
+                !Ref FrontendOrigin,
+                !Sub "https://${WebsiteDistribution.DomainName}",
+              ]
+            AllowedMethods: [GET, POST, HEAD]
+            AllowedHeaders: ["*"]
+            ExposedHeaders: [ETag, x-amz-version-id]
+            MaxAge: 300
+  FilesPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref PrivateFiles
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Deny
+            Principal: "*"
+            Action: s3:*
+            Resource: [!GetAtt PrivateFiles.Arn, !Sub "${PrivateFiles.Arn}/*"]
+            Condition: { Bool: { "aws:SecureTransport": false } }
+  Api:
+    Type: AWS::Serverless::HttpApi
+    Properties:
+      StageName: "$default"
+      CorsConfiguration:
+        AllowOrigins:
+          [
+            !Ref FrontendOrigin,
+            !Sub "https://${WebsiteDistribution.DomainName}",
+          ]
+        AllowMethods: [GET, POST, PUT, OPTIONS]
+        AllowHeaders: [authorization, content-type]
+        MaxAge: 300
+      DefaultRouteSettings:
+        ThrottlingBurstLimit: 20
+        ThrottlingRateLimit: 10
+      Auth:
+        DefaultAuthorizer: Cognito
+        Authorizers:
+          Cognito:
+            IdentitySource: "$request.header.Authorization"
+            AuthorizationScopes: [openid]
+            JwtConfiguration:
+              issuer: !Sub "https://cognito-idp.${AWS::Region}.amazonaws.com/${Users}"
+              audience: [!Ref UserClient]
+  Backend:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: build/backend/
+      Handler: handler.handler
+      Runtime: nodejs22.x
+      Architectures: [x86_64]
+      MemorySize: 256
+      Timeout: 25
+      Environment:
+        Variables:
+          TABLE_NAME: !Ref Data
+          PRIVATE_BUCKET: !Ref PrivateFiles
+          USER_POOL_ID: !Ref Users
+          CLIENT_ID: !Ref UserClient
+          MANUAL_PAYMENT_INSTRUCTIONS: !Ref ManualPaymentInstructions
+          PAYMENT_MODE: !Ref PaymentMode
+          BEDROCK_ENABLED: !Ref BedrockEnabled
+          BEDROCK_REGION: !Ref BedrockRegion
+          BEDROCK_MODEL_ID: !Ref BedrockModelId
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                [
+                  dynamodb:GetItem,
+                  dynamodb:Query,
+                  dynamodb:PutItem,
+                  dynamodb:UpdateItem,
+                  dynamodb:ConditionCheckItem,
+                ]
+              Resource: !GetAtt Data.Arn
+            - Effect: Allow
+              Action: [s3:GetObject, s3:GetObjectVersion, s3:PutObject]
+              Resource: !Sub "${PrivateFiles.Arn}/*"
+        - !If
+          - UseBedrock
+          - Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: bedrock:InvokeModel
+                Resource: !Sub "arn:${AWS::Partition}:bedrock:${BedrockRegion}::foundation-model/${BedrockModelId}"
+          - !Ref AWS::NoValue
+      Events:
+        Catalogue:
+          Type: HttpApi
+          Properties:
+            {
+              ApiId: !Ref Api,
+              Path: /courses,
+              Method: GET,
+              PayloadFormatVersion: "2.0",
+              Auth: { Authorizer: NONE },
+            }
+        Course:
+          Type: HttpApi
+          Properties:
+            {
+              ApiId: !Ref Api,
+              Path: "/courses/{id}",
+              Method: GET,
+              PayloadFormatVersion: "2.0",
+              Auth: { Authorizer: NONE },
+            }
+        Protected:
+          Type: HttpApi
+          Properties:
+            {
+              ApiId: !Ref Api,
+              Path: "/{proxy+}",
+              Method: ANY,
+              PayloadFormatVersion: "2.0",
+            }
+  Logs:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub "/aws/lambda/${Backend}"
+      RetentionInDays: 14
+Outputs:
+  ApiBaseUrl:
+    Value: !Sub "https://${Api}.execute-api.${AWS::Region}.amazonaws.com"
+  UserPoolId:
+    Value: !Ref Users
+  ClientId:
+    Value: !Ref UserClient
+  CognitoDomain:
+    Value: !Sub "https://${CognitoDomainPrefix}.auth.${AWS::Region}.amazoncognito.com"
+  PrivateBucket:
+    Value: !Ref PrivateFiles
+  Region:
+    Value: !Ref AWS::Region
+  WebsiteUrl:
+    Value: !Sub "https://${WebsiteDistribution.DomainName}"
+  WebsiteBucketName:
+    Value: !Ref WebsiteBucket
+  DistributionId:
+    Value: !Ref WebsiteDistribution

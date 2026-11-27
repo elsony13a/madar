@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>مولّد اليوزر إيجنت — UA Generator Pro</title>
+<style>
+  :root{
+    --bg:#0a0e17; --panel:#10141f; --panel2:#0d111a; --line:#1e2634;
+    --txt:#dbe4f0; --dim:#8b98ad; --faint:#5b6878;
+    --cyan:#22d3ee; --cyan2:#38bdf8; --green:#34d399; --red:#f87171;
+    --amber:#fbbf24; --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%}
+  body{background:var(--bg);color:var(--txt);font-family:"Segoe UI",Tahoma,"Noto Kufi Arabic",Arial,sans-serif;font-size:14px;line-height:1.5}
+  ::selection{background:#164e63;color:#fff}
+  ::-webkit-scrollbar{width:9px;height:9px}
+  ::-webkit-scrollbar-thumb{background:#233047;border-radius:6px}
+  ::-webkit-scrollbar-track{background:transparent}
+
+  /* ---------- header ---------- */
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:14px 20px 0;max-width:1600px;margin:0 auto}
+  .brand{display:flex;flex-direction:column;gap:2px}
+  .brand h1{font-size:clamp(19px,3vw,26px);font-weight:800;color:var(--cyan2);letter-spacing:.5px}
+  .brand h1 .en{font-family:var(--mono);direction:ltr;unicode-bidi:embed}
+  .brand small{color:var(--dim);font-size:11px;letter-spacing:3px}
+  .tabs{display:flex;gap:4px;flex-wrap:wrap;align-items:flex-end}
+  .tab{padding:9px 14px;color:var(--dim);cursor:pointer;border-bottom:2px solid transparent;font-weight:600;font-size:13px;user-select:none}
+  .tab:hover{color:var(--txt)}
+  .tab.active{color:var(--cyan);border-bottom-color:var(--cyan)}
+  .topbar-actions{display:flex;gap:10px;margin-inline-start:auto}
+  .btn-ghost{background:transparent;border:1px solid var(--line);color:var(--txt);padding:8px 14px;border-radius:8px;cursor:pointer;font-weight:600;font-size:13px}
+  .btn-ghost:hover{border-color:var(--cyan);color:var(--cyan)}
+
+  /* ---------- layout ---------- */
+  .wrap{display:flex;gap:18px;max-width:1600px;margin:0 auto;padding:14px 20px 40px;align-items:flex-start}
+  aside{width:330px;flex:0 0 330px;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px;position:sticky;top:14px;max-height:calc(100vh - 28px);overflow-y:auto}
+  main{flex:1;min-width:0}
+
+  /* ---------- sidebar sections ---------- */
+  .sec{margin-bottom:18px}
+  .sec-title{font-size:11px;font-weight:800;letter-spacing:1px;color:var(--cyan2);margin-bottom:9px;padding-inline-start:9px;border-inline-start:3px solid var(--cyan2);text-transform:uppercase}
+  .chips{display:flex;flex-wrap:wrap;gap:7px}
+  .chip{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:999px;padding:6px 13px;cursor:pointer;font-size:12.5px;font-weight:600;user-select:none;transition:.15s}
+  .chip:hover{color:var(--txt);border-color:#2c3a52}
+  .chip.on{color:var(--cyan);border-color:var(--cyan);background:#0b2430}
+  .hint{color:var(--dim);font-size:11.5px;margin-top:7px;line-height:1.6}
+  .hint.warn{color:var(--amber)}
+  .field{margin-top:10px}
+  .field label{display:block;font-size:11px;color:var(--dim);letter-spacing:1px;margin-bottom:5px;font-weight:700}
+  input[type=text],input[type=number],select,textarea{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:9px 11px;font-size:13px;outline:none;font-family:inherit}
+  input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{border-color:var(--cyan)}
+  .note{font-size:11px;color:var(--dim);margin-top:5px;line-height:1.6}
+  .checkline{display:flex;align-items:flex-start;gap:8px;margin-top:10px;cursor:pointer;font-size:12.5px;color:var(--dim)}
+  .checkline input{accent-color:var(--cyan);margin-top:2px;flex:0 0 auto}
+  .checkline b{color:var(--txt)}
+  .quick{display:flex;flex-wrap:wrap;gap:6px;margin-top:9px}
+  .quick button{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:7px;padding:5px 11px;cursor:pointer;font-size:12px;font-family:var(--mono)}
+  .quick button:hover{color:var(--cyan);border-color:var(--cyan)}
+
+  /* ---------- countries ---------- */
+  .c-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .btn-all{background:transparent;border:1px solid var(--cyan);color:var(--cyan);border-radius:7px;padding:4px 12px;cursor:pointer;font-size:12px;font-weight:800}
+  .btn-all.on{background:#0b2430}
+  .clist{max-height:190px;overflow-y:auto;border:1px solid var(--line);border-radius:8px;background:var(--panel2);margin-top:8px}
+  .c-item{display:flex;gap:9px;padding:7px 10px;cursor:pointer;font-size:12.5px;border-bottom:1px solid #131926;align-items:center}
+  .c-item:last-child{border-bottom:0}
+  .c-item .cc{font-family:var(--mono);color:var(--dim);font-size:11px;width:24px;flex:0 0 24px}
+  .c-item.sel{background:#0b2430;color:var(--cyan)}
+  .c-item:hover{background:#0e2a3a}
+  .c-item.sel .cc{color:var(--cyan)}
+
+  /* ---------- generate button ---------- */
+  .btn-generate{width:100%;padding:14px;border:0;border-radius:10px;cursor:pointer;font-size:15px;font-weight:800;color:#04222b;
+    background:linear-gradient(90deg,var(--cyan),var(--cyan2));letter-spacing:.5px;margin-top:4px}
+  .btn-generate:hover{filter:brightness(1.08)}
+  .btn-generate:active{transform:translateY(1px)}
+
+  /* ---------- stats ---------- */
+  .stats{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 12px;font-size:12.5px;color:var(--dim)}
+  .stat b{color:var(--txt)}
+  .stat b.ok{color:var(--green)} .stat b.bad{color:var(--red)}
+
+  /* ---------- results table ---------- */
+  .table-scroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+  table{border-collapse:collapse;width:100%;min-width:980px}
+  thead th{position:sticky;top:0;background:#0c101b;color:var(--dim);font-size:10.5px;letter-spacing:1.2px;text-transform:uppercase;text-align:start;padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+  tbody td{padding:9px 12px;border-bottom:1px solid #131926;font-size:12.5px;vertical-align:middle}
+  tbody tr:hover{background:#0d1420}
+  td.num{font-family:var(--mono);color:var(--dim);font-size:11px;direction:ltr}
+  td.cc{font-family:var(--mono);color:var(--cyan);font-weight:700}
+  td.brand{font-weight:800}
+  td.model{color:var(--dim)}
+  .oschip{display:inline-block;background:#0b2430;border:1px solid #155e75;color:var(--cyan);border-radius:6px;padding:3px 9px;font-size:11.5px;font-weight:700;font-family:var(--mono);white-space:nowrap;direction:ltr}
+  td.ua{font-family:var(--mono);font-size:11.5px;color:#a8b8cc;direction:ltr;text-align:left;word-break:break-all;min-width:430px;max-width:680px;line-height:1.55}
+  td.okv{color:var(--green);font-weight:800;white-space:nowrap}
+  td.okv.bad{color:var(--red)}
+  .copybtn{background:var(--panel2);border:1px solid var(--line);color:var(--dim);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:12px;white-space:nowrap}
+  .copybtn:hover{color:var(--cyan);border-color:var(--cyan)}
+  .empty{padding:46px 20px;text-align:center;color:var(--dim)}
+  .empty .big{font-size:38px;margin-bottom:10px}
+
+  /* ---------- data / about tabs ---------- */
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:18px;margin-bottom:14px}
+  .card h3{color:var(--cyan2);font-size:15px;margin-bottom:10px}
+  .card p{color:var(--dim);margin-bottom:8px;font-size:13px;line-height:1.8}
+  .card table{min-width:0}
+  .card thead th{position:static}
+  .card td,.card th{font-size:12.5px}
+  .kv{display:grid;grid-template-columns:auto 1fr;gap:6px 14px;font-size:13px}
+  .kv dt{color:var(--dim)} .kv dd{color:var(--txt);font-family:var(--mono);direction:ltr;text-align:end}
+  .src{color:var(--faint,#5b6878);font-size:11.5px;line-height:1.8}
+  .src a{color:#3f8baa;text-decoration:none}
+  .textarea-ltr{direction:ltr;text-align:left;font-family:var(--mono);min-height:110px}
+  .verdict{border-radius:8px;padding:10px 14px;font-weight:700;font-size:13px;margin-top:10px;display:none}
+  .verdict.ok{display:block;background:#0b2b21;color:var(--green);border:1px solid #14532d}
+  .verdict.bad{display:block;background:#2b1414;color:var(--red);border:1px solid #7f1d1d}
+  .parsed{margin-top:12px;display:none}
+  .parsed.show{display:block}
+
+  /* ---------- toast ---------- */
+  #toast{position:fixed;bottom:22px;inset-inline-start:50%;transform:translateX(50%);background:#0b2430;border:1px solid var(--cyan);color:var(--cyan);padding:10px 22px;border-radius:10px;font-weight:700;font-size:13px;opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  #toast.show{opacity:1}
+
+  /* ---------- responsive ---------- */
+  @media (max-width:1020px){
+    .wrap{flex-direction:column;align-items:stretch}
+    aside{width:100%;flex:1 1 auto;position:static;max-height:none}
+    header{padding:12px 14px 0}
+    .wrap{padding:12px 14px 30px}
+    .topbar-actions{width:100%;margin-inline-start:0}
+  }
+  @media (max-width:640px){
+    .brand h1{font-size:18px}
+    td.ua{min-width:300px;max-width:400px}
+    table{min-width:840px}
+    .stat{padding:5px 9px;font-size:11.5px}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <h1>مولّد اليوزر إيجنت <span class="en">· UA GENERATOR</span></h1>
+    <small>USERAGENT PRO — فيسبوك · إنستجرام · آيفون · أندرويد · ويندوز</small>
+  </div>
+  <nav class="tabs" id="tabs">
+    <div class="tab active" data-tab="gen">✳ المولّد</div>
+    <div class="tab" data-tab="analyse">⌕ محلّل اليوزر</div>
+    <div class="tab" data-tab="versions">▦ الإصدارات والبيانات</div>
+    <div class="tab" data-tab="about">ⓘ عن الأداة</div>
+  </nav>
+  <div class="topbar-actions">
+    <button class="btn-ghost" id="btnCopyAll">⧉ نسخ الكل</button>
+    <button class="btn-ghost" id="btnExport">⭳ تصدير TXT</button>
+  </div>
+</header>
+
+<div class="wrap">
+<aside>
+
+  <div class="sec">
+    <div class="sec-title">النمط · تطبيق اجتماعي</div>
+    <div class="chips" id="modeChips">
+      <div class="chip" data-mode="standard">عادي</div>
+      <div class="chip" data-mode="mixed">مختلط</div>
+      <div class="chip on" data-mode="facebook">فيسبوك</div>
+      <div class="chip" data-mode="instagram">إنستجرام</div>
+    </div>
+    <div class="hint">«عادي» = متصفح بدون توكنات. عند اختيار <b>فيسبوك / إنستجرام</b> يُضاف التوكن الرسمي بصيغة التطبيق الحقيقي — <b dir="ltr">[FB_IAB/FB4A;FBAV/…]</b> أو <b dir="ltr">Instagram …</b>: على آيفون وأندرويد تمامًا كما يفعله التطبيق، وعلى سطح المكتب كتوكن اختبار لأن يوزر الويندوز الحقيقي لا يحمل توكن.</div>
+    <div class="field">
+      <label>إصدار تطبيق يدوي (اختياري)</label>
+      <input type="text" id="customApp" placeholder="مثال: 329.0.0.27.121" dir="ltr" style="text-align:left">
+      <div class="note">يستبدل إصدار فيسبوك/إنستجرام في التوكن — اتركه فارغًا للاختيار التلقائي.</div>
+    </div>
+    <div class="field">
+      <label>إصدار يدوي — نظام (iOS/أندرويد) أو متصفح</label>
+      <input type="text" id="manualOs" placeholder="iOS مثل 17.5.1 — أندرويد مثل 14" dir="ltr" style="text-align:left">
+      <div class="note" id="manualOsNote">يُستخدم بالحرف كما تكتبه: على سطح المكتب يصبح إصدار المتصفح (Chrome/Edge/Opera/Firefox)، وعلى iOS/أندرويد إصدار النظام ويُطبَّق فقط على الأجهزة التي تدعمه فعلًا.</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">إصدار الأندرويد</div>
+    <div class="chips" id="androidChips">
+      <div class="chip" data-av="9">أندرويد 9</div>
+      <div class="chip" data-av="10">أندرويد 10</div>
+      <div class="chip" data-av="11">أندرويد 11</div>
+      <div class="chip" data-av="12">أندرويد 12</div>
+      <div class="chip" data-av="13">أندرويد 13</div>
+      <div class="chip" data-av="14">أندرويد 14</div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">آي أو إس</div>
+    <div class="chips" id="iosChips">
+      <div class="chip" data-ios="1">iOS</div>
+    </div>
+    <div class="hint">اختيار «iOS» = أي إصدار مدعوم على الجهاز (من iOS 15.6.1 حتى 18.5). لإصدار محدد استخدم حقل «إصدار نظام يدوي».</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">سطح المكتب</div>
+    <div class="chips" id="desktopChips">
+      <div class="chip" data-dt="win10">ويندوز 10</div>
+      <div class="chip on" data-dt="win11">ويندوز 11</div>
+      <div class="chip" data-dt="mac">ماك أو إس</div>
+      <div class="chip" data-dt="linux">لينكس</div>
+    </div>
+    <div class="hint warn" id="desktopNote" style="display:none">على سطح المكتب الحقيقي لا يحمل اليوزر توكن فيسبوك/إنستجرام — عند اختيارهما هنا تُضاف «توكنات اختبار» بنفس صيغة التطبيق الحقيقي (<b dir="ltr">[FB_IAB/FB4A;FBAV/…]</b> أو <b dir="ltr">Instagram …</b>) حتى تشتغل اختبارات الكشف عندك.</div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">نوع الجهاز / المتصفح</div>
+    <div class="field">
+      <select id="deviceSel"></select>
+      <div class="note" id="deviceNote"></div>
+    </div>
+  </div>
+
+  <div class="sec">
+    <div class="sec-title">عدد التوليد</div>
+    <div class="field">
+      <input type="number" id="count" value="10" min="1" max="100000">
+    </div>
+    <div class="quick" id="quickCounts">
+      <button data-c="10">10</button><button data-c="50">50</button><button data-c="100">100</button>
+      <button data-c="500">500</button><button data-c="1000">1K</button><button data-c="5000">5K</button><button data-c="10000">10K</button>
+    </div>
+    <div class="checkline"><input type="checkbox" id="reducedUA" checked><span><b>يوزر مختصر:</b> Chrome/<span dir="ltr">&lt;major&gt;</span>.0.0.0 — نفس ما يرسله كروم/إيدج/أوبرا الحديثة فعلًا (كروم وإيدج وأوبرا فقط)</span></div>
+    <div class="checkline"><input type="checkbox" id="allowRepeat"><span><b>اسمح بالتكرار:</b> يوزرات فريدة داخل الدفعة وقد تتكرر عبر الجلسات — مفيد لسطح المكتب لأن يوزراته الحقيقية محدودة، ولا تُسجَّل في ذاكرة التفرد</span></div>
+    <div class="hint warn" id="uniqHint"></div>
+  </div>
+
+  <div class="sec">
+    <div class="c-head">
+      <div class="sec-title" style="margin:0">الدول</div>
+      <button class="btn-all on" id="btnAllCountries">✓ الكل</button>
+    </div>
+    <input type="text" id="countrySearch" placeholder="ابحث عن دولة… (مثال: مصر أو US)">
+    <div class="hint" id="countryStatus" style="margin:6px 0 0;font-weight:700;color:var(--cyan)"></div>
+    <div class="clist" id="countryList"></div>
+    <div class="note">اللغة داخل اليوزر (FBLC / locale) تتبع الدولة المختارة تلقائيًا.</div>
+  </div>
+
+  <button class="btn-generate" id="btnGenerate">▸ توليد اليوزر إيجنت</button>
+</aside>
+
+<main id="tab-gen">
+  <div class="stats" id="stats">
+    <div class="stat">الإجمالي: <b id="stTotal">0</b></div>
+    <div class="stat">معروض: <b id="stShown">0</b></div>
+    <div class="stat">الوقت: <b id="stTime">—</b></div>
+    <div class="stat">صالح: <b id="stValid">—</b></div>
+    <div class="stat">ذاكرة التفرد: <b id="stSeen">0</b> يوزر عبر كل الجلسات</div>
+    <button class="btn-ghost" id="btnResetHistory" title="مسح ذاكرة عدم التكرار المحفوظة في متصفحك — يسمح بتوليد نفس اليوزرات من جديد">🗑 مسح السجل</button>
+  </div>
+  <div class="hint warn" id="renderNote" style="display:none;margin-bottom:8px"></div>
+  <div class="table-scroll">
+    <table>
+      <thead><tr>
+        <th>#</th><th>CC</th><th>BRAND</th><th>MODEL</th><th>النظام</th><th>التطبيق</th><th>USER AGENT STRING</th><th>OK</th><th>نسخ</th>
+      </tr></thead>
+      <tbody id="tbody"><tr><td colspan="9" class="empty"><div class="big">🧪</div>اضبط الخيارات من القائمة الجانبية ثم اضغط «توليد اليوزر إيجنت»<br>كل يوزر يُفحص ضد السجل حتى لا يتكرر أي يوزر أبدًا — نسخ واحد أو نسخ الكل، وكل توليد جديد يخرج يوزرات مختلفة تمامًا.</td></tr></tbody>
+    </table>
+  </div>
+</main>
+
+<main id="tab-analyse" style="display:none">
+  <div class="card">
+    <h3>⌕ محلّل اليوزر إيجنت</h3>
+    <p>الصق أي User-Agent (من سجلات موقعك مثلًا) ليتم تحليله: المنصة، النظام والإصدار، الجهاز، التطبيق أو المتصفح، اللغة، وإن كان يوزر متصفح داخل تطبيق فيسبوك/إنستجرام حقيقيًا أم لا.</p>
+    <textarea id="analyseInput" class="textarea-ltr" placeholder="Mozilla/5.0 (iPhone; CPU iPhone OS 17_5_1 like Mac OS X) ..."></textarea>
+    <div style="margin-top:10px"><button class="btn-ghost" id="btnAnalyse">تحليل</button></div>
+    <div class="verdict" id="analyseVerdict"></div>
+    <div class="parsed card" id="analyseParsed" style="background:var(--panel2)"><dl class="kv" id="analyseKv"></dl></div>
+  </div>
+</main>
+
+<main id="tab-versions" style="display:none">
+  <div id="versionsData"></div>
+</main>
+
+<main id="tab-about" style="display:none">
+  <div class="card">
+    <h3>ⓘ عن الأداة</h3>
+    <p>هذه الأداة مبنية على نفس معمارية سكربت <b>ua_generator.py</b> المرفق: جداول بيانات حقيقية (أجهزة iPhone بمعرّفاتها مثل iPhone14,2 وأدنى/أقصى iOS، أجهزة Samsung وMotorola ببيّنات البناء الحقيقية، إصدارات Facebook مع FBBV، إصدارات Instagram، وإصدارات Chrome/WebView) ثم سلسلة توليد متسقة داخليًا: <b>جهاز ← إصدار نظام يدعمه فعلًا ← رقم البناء المطابق ← إصدار تطبيق متوافق ← معرّفات عشوائية + اللغة + الدقة</b> — وكل سلسلة تُفحص قبل العرض بـ Regex مخصص لصيغتها.</p>
+    <p><b>لا تكرار أبدًا:</b> كل يوزر يُولَّد يُقارن بسجلّ تراكمي محفوظ في متصفحك (localStorage)، فحتى لو نسخت الكل ثم ولّدت دفعة جديدة، أو أغلقت الصفحة وفتحتها لاحقًا، لن يخرج لك يوزر سبق أن ظهر لك. وإذا استنفدت كل احتمالات إعداداتك وظهرت رسالة «بلغنا حدّ التفرد»، اضغط زر <b>🗑 مسح السجل</b> (بجوار الإحصاءات، وبتأكيد بضغطتين) ثم ولّد من جديد.</p>
+    <p><b>سطح المكتب وفيسبوك/إنستجرام:</b> متصفحات ويندوز/ماك/لينكس الحقيقية لا تضيف أي توكن لفيسبوك/إنستجرام — لذلك عند اختيارهما هنا تُضاف «توكنات اختبار» بنفس صيغة التطبيق الحقيقي (<b dir="ltr">[FB_IAB/FB4A;FBAV/…]</b> أو <b dir="ltr">Instagram …</b>) وعددها موثّق في عمود التطبيق بعبارة «توكن اختبار»، حتى تعمل اختبارات الكشف عندك على سطح المكتب أيضًا. وويندوز 11 يُرسل فعلًا «Windows NT 10.0»، وإيدج يرسل دائمًا الصيغة المختصرة Edg/رقم.0.0.0.</p>
+    <p><b>حدود التفرد:</b> على iOS/أندرويد المساحة هائلة (ملايين التركيبات الممكنة). على سطح المكتب اليوزر الحقيقي لا يتغير إلا بإصدار المتصفح، لذا التفرد هناك محدود (≈2000 يوزر مع توكن تطبيق، ≈150 للعادي) وستظهر رسالة عند بلوغه — وهذا سلوك صادق وليس قصورًا.</p>
+    <p><b>الإصدار اليدوي:</b> الحقل «إصدار يدوي» يعني حسب المنصة: على iOS إصدار نظام (مثل 17.5.1) وستولّد الأداة فقط الأجهزة التي تدعمه فعلًا برقم البناء الحقيقي؛ على أندرويد رقم الإصدار (مثل 14)؛ وعلى سطح المكتب <b>إصدار المتصفح</b> (مثل 158.0.0.0 أو 158.0.8127.36) ويُستخدم بالحرف كما كتبته. المحلّل يقبل لصق دفعة كاملة (سطر لكل يوزر) ويعطي حكمًا لكل سطر.</p>
+    <p><b>استخدام مسؤول:</b> الأداة لاختبار تعامل موقعك أنت مع زوار متصفحات الفيسبوك/إنستجرام داخل التطبيق (تحليلات، اكتشاف، عرض المحتوى). بيانات الإصدارات محقّقة من مصادر عامة (whatismybrowser، useragents.io، appledb، theapplewiki، support.apple) وآخر مراجعة: نوفمبر 2025.</p>
+  </div>
+</main>
+
+</div>
+<div id="toast"></div>
+<script>
+"use strict";
+const DATA = {"iphones":[{"id":"iPhone10,1","name":"iPhone 8","min_ios":"11.0","max_ios":"16.6.1","scale":"2.00","w":750,"h":1334},{"id":"iPhone10,2","name":"iPhone 8 Plus","min_ios":"11.0","max_ios":"16.6.1","scale":"3.00","w":1080,"h":1920},{"id":"iPhone10,3","name":"iPhone X","min_ios":"11.0","max_ios":"16.6.1","scale":"3.00","w":1125,"h":2436},{"id":"iPhone11,2","name":"iPhone XS","min_ios":"12.1","max_ios":"18.5","scale":"3.00","w":1125,"h":2436},{"id":"iPhone11,4","name":"iPhone XS Max","min_ios":"12.1","max_ios":"18.5","scale":"3.00","w":1242,"h":2688},{"id":"iPhone11,8","name":"iPhone XR","min_ios":"12.1","max_ios":"18.5","scale":"2.00","w":828,"h":1792},{"id":"iPhone12,1","name":"iPhone 11 Pro","min_ios":"13.0","max_ios":"18.5","scale":"3.00","w":1125,"h":2436},{"id":"iPhone12,3","name":"iPhone 11 Pro Max","min_ios":"13.0","max_ios":"18.5","scale":"3.00","w":1242,"h":2688},{"id":"iPhone12,8","name":"iPhone SE (2nd generation)","min_ios":"13.4","max_ios":"18.5","scale":"2.00","w":750,"h":1334},{"id":"iPhone13,1","name":"iPhone 12 mini","min_ios":"14.0","max_ios":"18.5","scale":"3.00","w":1080,"h":2340},{"id":"iPhone13,2","name":"iPhone 12","min_ios":"14.0","max_ios":"18.5","scale":"3.00","w":1170,"h":2532},{"id":"iPhone13,3","name":"iPhone 12 Pro","min_ios":"14.0","max_ios":"18.5","scale":"3.00","w":1170,"h":2532},{"id":"iPhone13,4","name":"iPhone 12 Pro Max","min_ios":"14.0","max_ios":"18.5","scale":"3.00","w":1284,"h":2778},{"id":"iPhone14,2","name":"iPhone 13 Pro","min_ios":"15.0","max_ios":"18.5","scale":"3.00","w":1179,"h":2556},{"id":"iPhone14,3","name":"iPhone 13 Pro Max","min_ios":"15.0","max_ios":"18.5","scale":"3.00","w":1284,"h":2778},{"id":"iPhone14,4","name":"iPhone 13 mini","min_ios":"15.0","max_ios":"18.5","scale":"3.00","w":1080,"h":2340},{"id":"iPhone14,5","name":"iPhone 13","min_ios":"15.0","max_ios":"18.5","scale":"3.00","w":1170,"h":2532},{"id":"iPhone14,6","name":"iPhone SE (3rd generation)","min_ios":"15.4","max_ios":"18.5","scale":"2.00","w":750,"h":1334},{"id":"iPhone14,7","name":"iPhone 14","min_ios":"16.0","max_ios":"18.5","scale":"3.00","w":1170,"h":2532},{"id":"iPhone14,8","name":"iPhone 14 Plus","min_ios":"16.0","max_ios":"18.5","scale":"3.00","w":1290,"h":2796},{"id":"iPhone15,2","name":"iPhone 14 Pro","min_ios":"16.0","max_ios":"18.5","scale":"3.00","w":1179,"h":2556},{"id":"iPhone15,3","name":"iPhone 14 Pro Max","min_ios":"16.0","max_ios":"18.5","scale":"3.00","w":1290,"h":2796},{"id":"iPhone15,4","name":"iPhone 15","min_ios":"17.0","max_ios":"18.5","scale":"3.00","w":1179,"h":2556},{"id":"iPhone15,5","name":"iPhone 15 Plus","min_ios":"17.0","max_ios":"18.5","scale":"3.00","w":1290,"h":2796},{"id":"iPhone16,1","name":"iPhone 15 Pro","min_ios":"17.0","max_ios":"18.5","scale":"3.00","w":1179,"h":2556},{"id":"iPhone16,2","name":"iPhone 15 Pro Max","min_ios":"17.0","max_ios":"18.5","scale":"3.00","w":1290,"h":2796},{"id":"iPhone17,3","name":"iPhone 16","min_ios":"18.0","max_ios":"18.5","scale":"3.00","w":1179,"h":2556},{"id":"iPhone17,4","name":"iPhone 16 Plus","min_ios":"18.0","max_ios":"18.5","scale":"3.00","w":1290,"h":2796},{"id":"iPhone17,5","name":"iPhone 16 Pro","min_ios":"18.0","max_ios":"18.5","scale":"3.00","w":1179,"h":2556},{"id":"iPhone17,6","name":"iPhone 16 Pro Max","min_ios":"18.0","max_ios":"18.5","scale":"3.00","w":1290,"h":2796}],"ios_versions":{"15.6.1":{"build":"19G82","webkit":"605.1.15","weight":1},"16.6.1":{"build":"20G81","webkit":"605.1.15","weight":2},"17.5.1":{"build":"21E236","webkit":"605.1.15","weight":3},"17.6.1":{"build":"21G93","webkit":"605.1.15","weight":3},"18.0":{"build":"22A3350","webkit":"605.1.15","weight":4},"18.1":{"build":"22B83","webkit":"605.1.15","weight":4},"18.2":{"build":"22C152","webkit":"605.1.15","weight":5},"18.3":{"build":"22D60","webkit":"605.1.15","weight":5},"18.5":{"build":"22F76","webkit":"605.1.15","weight":6}},"android_versions":{"9":28,"10":29,"11":30,"12":31,"13":33,"14":34},"samsung_builds":{"9":"PPR1.180610.011","10":"QP1A.190711.020","11":"RP1A.200720.012","12":"SP1A.210812.016","13":"TP1A.220624.014","14":"UP1A.231005.007"},"android_devices":[{"brand":"samsung","make":"Galaxy S9","model":"SM-G960F","board":"starqltechn","chipset":"universal9810","dpi":560,"w":1440,"h":2960,"builds":{"9":"PPR1.180610.011"}},{"brand":"samsung","make":"Galaxy S9+","model":"SM-G965F","board":"star2qltechn","chipset":"universal9810","dpi":560,"w":1440,"h":2960,"builds":{"9":"PPR1.180610.011"}},{"brand":"samsung","make":"Galaxy S10","model":"SM-G973F","board":"beyond1","chipset":"universal9820","dpi":550,"w":1440,"h":3040,"builds":{"9":"PPR1.180610.011","10":"QP1A.190711.020","11":"RP1A.200720.012","12":"SP1A.210812.016"}},{"brand":"samsung","make":"Galaxy S10+","model":"SM-G975F","board":"beyond2","chipset":"universal9820","dpi":550,"w":1440,"h":3040,"builds":{"9":"PPR1.180610.011","10":"QP1A.190711.020","11":"RP1A.200720.012","12":"SP1A.210812.016"}},{"brand":"samsung","make":"Galaxy A50","model":"SM-A505F","board":"a50","chipset":"universal9610","dpi":410,"w":1080,"h":2340,"builds":{"9":"PPR1.180610.011","10":"QP1A.190711.020","11":"RP1A.200720.012"}},{"brand":"samsung","make":"Galaxy A51","model":"SM-A515F","board":"a51","chipset":"universal9611","dpi":410,"w":1080,"h":2400,"builds":{"10":"QP1A.190711.020","11":"RP1A.200720.012","12":"SP1A.210812.016"}},{"brand":"samsung","make":"Galaxy A12","model":"SM-A125F","board":"a12","chipset":"mtk","dpi":300,"w":720,"h":1600,"builds":{"10":"QP1A.190711.020","11":"RP1A.200720.012"}},{"brand":"samsung","make":"Galaxy A32","model":"SM-A325F","board":"a32","chipset":"mtk","dpi":410,"w":1080,"h":2400,"builds":{"11":"RP1A.200720.012","12":"SP1A.210812.016","13":"TP1A.220624.014"}},{"brand":"samsung","make":"Galaxy A52","model":"SM-A525F","board":"a52","chipset":"qcom","dpi":420,"w":1080,"h":2400,"builds":{"11":"RP1A.200720.012","12":"SP1A.210812.016","13":"TP1A.220624.014","14":"UP1A.231005.007"}},{"brand":"samsung","make":"Galaxy S21","model":"SM-G991B","board":"o1s","chipset":"universal2100","dpi":420,"w":1080,"h":2400,"builds":{"11":"RP1A.200720.012","12":"SP1A.210812.016","13":"TP1A.220624.014","14":"UP1A.231005.007"}},{"brand":"samsung","make":"Galaxy S21 Ultra","model":"SM-G998B","board":"o3s","chipset":"universal2100","dpi":500,"w":1440,"h":3200,"builds":{"11":"RP1A.200720.012","12":"SP1A.210812.016","13":"TP1A.220624.014","14":"UP1A.231005.007"}},{"brand":"samsung","make":"Galaxy S22","model":"SM-S901B","board":"r0s","chipset":"s5e9925","dpi":450,"w":1080,"h":2340,"builds":{"12":"SP1A.210812.016","13":"TP1A.220624.014","14":"UP1A.231005.007"}},{"brand":"samsung","make":"Galaxy S22 Ultra","model":"SM-S908B","board":"b0s","chipset":"s5e9925","dpi":500,"w":1440,"h":3088,"builds":{"12":"SP1A.210812.016","13":"TP1A.220624.014","14":"UP1A.231005.007"}},{"brand":"samsung","make":"Galaxy S23","model":"SM-S911B","board":"dm1s","chipset":"qcom","dpi":450,"w":1080,"h":2340,"builds":{"13":"TP1A.220624.014","14":"UP1A.231005.007"}},{"brand":"samsung","make":"Galaxy S23+","model":"SM-S916B","board":"dm2s","chipset":"qcom","dpi":450,"w":1080,"h":2340,"builds":{"13":"TP1A.220624.014","14":"UP1A.231005.007"}},{"brand":"samsung","make":"Galaxy S23 Ultra","model":"SM-S918B","board":"dm3s","chipset":"qcom","dpi":500,"w":1440,"h":3088,"builds":{"13":"TP1A.220624.014","14":"UP1A.231005.007"}},{"brand":"samsung","make":"Galaxy Z Fold4","model":"SM-F946B","board":"q5q","chipset":"qcom","dpi":420,"w":1812,"h":2176,"builds":{"12":"SP1A.210812.016","13":"TP1A.220624.014","14":"UP1A.231005.007"}},{"brand":"samsung","make":"Galaxy A16 5G","model":"SM-A166U","board":"a16x","chipset":"s5e8535","dpi":450,"w":1080,"h":2340,"builds":{"14":"UP1A.231005.007"}},{"brand":"Motorola","make":"Moto G7 Power","model":"moto g(7) power","board":"ocean","chipset":"qcom","dpi":320,"w":720,"h":1403,"builds":{"9":"PCOS29.114-134-14"}},{"brand":"Motorola","make":"Moto G8 Power","model":"moto g(8) power","board":"sofiar","chipset":"qcom","dpi":420,"w":1080,"h":2121,"builds":{"11":"RPES31.Q4U-47-35-12"}},{"brand":"Motorola","make":"Moto G30","model":"moto g(30)","board":"caprip","chipset":"qcom","dpi":280,"w":720,"h":1515,"builds":{"12":"S0RCS32.41-10-19-14"}},{"brand":"Motorola","make":"Moto G60","model":"moto g(60)","board":"hanoip","chipset":"qcom","dpi":400,"w":1080,"h":2225,"builds":{"12":"S2RI32.32-20-9-9-2"}}],"fb_versions":[{"ver":"165.0.0.36.148","fbbv":"165036148","min_ios":"12.0","min_api":26},{"ver":"190.0.0.46.80","fbbv":"190046080","min_ios":"12.0","min_api":26},{"ver":"218.0.0.24.70","fbbv":"218024070","min_ios":"13.0","min_api":26},{"ver":"236.0.0.10.70","fbbv":"236010070","min_ios":"13.0","min_api":26},{"ver":"259.0.0.21.111","fbbv":"259021111","min_ios":"13.0","min_api":26},{"ver":"265.0.0.20.34","fbbv":"265020034","min_ios":"13.0","min_api":26},{"ver":"292.0.0.30.112","fbbv":"292030112","min_ios":"14.0","min_api":26},{"ver":"301.0.0.40.117","fbbv":"301040117","min_ios":"14.0","min_api":26},{"ver":"329.0.0.27.121","fbbv":"329027121","min_ios":"14.0","min_api":26},{"ver":"350.0.0.3.75","fbbv":"350003075","min_ios":"14.0","min_api":26},{"ver":"400.0.0.38.85","fbbv":"400038085","min_ios":"15.0","min_api":26},{"ver":"439.0.0.29.119","fbbv":"439029119","min_ios":"15.0","min_api":26},{"ver":"445.0.0.34.118","fbbv":"445034118","min_ios":"15.0","min_api":26},{"ver":"446.0.0.32.90","fbbv":"446032090","min_ios":"15.0","min_api":26}],"ig_versions":{"ios":[{"ver":"254.0.0.19.106","min_ios":"13.0"},{"ver":"291.0.0.22.112","min_ios":"14.0"},{"ver":"312.1.0.34.111","min_ios":"15.0"}],"android":[{"ver":"146.0.0.27.125","min_api":26},{"ver":"309.0.0.40.113","min_api":26},{"ver":"310.0.0.37.328","min_api":26},{"ver":"311.0.0.32.118","min_api":26},{"ver":"312.1.0.34.111","min_api":26},{"ver":"438.0.0.28.88","min_api":26}]},"chrome_webview":["83.0.4103.106","86.0.4240.198","90.0.4430.212","94.0.4606.71","96.0.4664.93","98.0.4758.101","100.0.4896.127","103.0.5060.129","105.0.5195.127","107.0.5304.122","108.0.5359.125","109.0.5414.120","110.0.5481.177","111.0.5563.116","112.0.5615.138","113.0.5672.163","114.0.5735.196","115.0.5790.170","116.0.5845.163","117.0.5938.140","118.0.5993.117","119.0.6045.66","119.0.6045.163","120.0.6099.43","120.0.6099.144","121.0.6167.178","122.0.6261.90","123.0.6312.118","124.0.6367.179","126.0.6478.122","127.0.6533.103","128.0.6613.128","129.0.6668.70","130.0.6723.86","131.0.6778.200","132.0.6833.79","150.0.7871.118"],"android_chrome":{"28":["83.0.4103.106","86.0.4240.198","90.0.4430.212","94.0.4606.71","96.0.4664.93","98.0.4758.101"],"29":["94.0.4606.71","96.0.4664.93","98.0.4758.101","100.0.4896.127","103.0.5060.129","105.0.5195.127","107.0.5304.122"],"30":["103.0.5060.129","105.0.5195.127","107.0.5304.122","109.0.5414.120","111.0.5563.116","113.0.5672.163","115.0.5790.170","117.0.5938.140","119.0.6045.163","120.0.6099.144"],"31":["119.0.6045.66","119.0.6045.163","120.0.6099.43","120.0.6099.144","122.0.6261.90","124.0.6367.179","126.0.6478.122","128.0.6613.128","130.0.6723.86","132.0.6833.79","150.0.7871.118"],"33":["122.0.6261.90","124.0.6367.179","126.0.6478.122","128.0.6613.128","130.0.6723.86","131.0.6778.200","132.0.6833.79","150.0.7871.118"],"34":["126.0.6478.122","127.0.6533.103","128.0.6613.128","129.0.6668.70","130.0.6723.86","131.0.6778.200","132.0.6833.79","150.0.7871.118"]},"firefox_versions":["115.0","115.0.1","116.0","116.0.1","117.0","117.0.1","118.0","118.0.1","119.0","119.0.1","120.0","120.0.1","121.0","121.0.1","122.0","122.0.1","123.0","123.0.1","124.0","124.0.1","125.0","125.0.1","126.0","126.0.1","127.0","127.0.1","128.0","128.0.1","129.0","129.0.1","130.0","130.0.1","131.0","131.0.1","132.0","132.0.1","133.0","133.0.1","134.0","134.0.1","135.0","135.0.1","136.0","136.0.1","137.0","137.0.1","138.0","138.0.1","139.0","139.0.1","140.0","140.0.1","141.0","141.0.1","142.0","142.0.1","143.0","143.0.1","144.0","144.0.1","145.0","145.0.1","146.0","146.0.1","147.0","147.0.1"],"pc_brands":["HP","Dell","Lenovo","ASUS","Acer","MSI"],"win11_chrome_min":95,"countries":[{"cc":"EG","ar":"مصر","fb":"ar_AR","ig":"ar_EG"},{"cc":"SA","ar":"السعودية","fb":"ar_AR","ig":"ar_SA"},{"cc":"AE","ar":"الإمارات","fb":"ar_AR","ig":"ar_AE"},{"cc":"QA","ar":"قطر","fb":"ar_AR","ig":"ar_QA"},{"cc":"KW","ar":"الكويت","fb":"ar_AR","ig":"ar_KW"},{"cc":"BH","ar":"البحرين","fb":"ar_AR","ig":"ar_BH"},{"cc":"OM","ar":"عُمان","fb":"ar_AR","ig":"ar_OM"},{"cc":"JO","ar":"الأردن","fb":"ar_AR","ig":"ar_JO"},{"cc":"LB","ar":"لبنان","fb":"ar_AR","ig":"ar_LB"},{"cc":"SY","ar":"سوريا","fb":"ar_AR","ig":"ar_SY"},{"cc":"IQ","ar":"العراق","fb":"ar_AR","ig":"ar_IQ"},{"cc":"YE","ar":"اليمن","fb":"ar_AR","ig":"ar_YE"},{"cc":"PS","ar":"فلسطين","fb":"ar_AR","ig":"ar_PS"},{"cc":"MA","ar":"المغرب","fb":"ar_AR","ig":"ar_MA"},{"cc":"DZ","ar":"الجزائر","fb":"ar_AR","ig":"ar_DZ"},{"cc":"TN","ar":"تونس","fb":"ar_AR","ig":"ar_TN"},{"cc":"LY","ar":"ليبيا","fb":"ar_AR","ig":"ar_LY"},{"cc":"SD","ar":"السودان","fb":"ar_AR","ig":"ar_SD"},{"cc":"MR","ar":"موريتانيا","fb":"ar_AR","ig":"ar_MR"},{"cc":"SO","ar":"الصومال","fb":"so_SO","ig":"so_SO"},{"cc":"DJ","ar":"جيبوتي","fb":"fr_DJ","ig":"fr_DJ"},{"cc":"KM","ar":"جزر القمر","fb":"ar_AR","ig":"ar_KM"},{"cc":"TR","ar":"تركيا","fb":"tr_TR","ig":"tr_TR"},{"cc":"IR","ar":"إيران","fb":"fa_IR","ig":"fa_IR"},{"cc":"IL","ar":"إسرائيل","fb":"he_IL","ig":"he_IL"},{"cc":"AF","ar":"أفغانستان","fb":"fa_AF","ig":"fa_AF"},{"cc":"PK","ar":"باكستان","fb":"ur_PK","ig":"ur_PK"},{"cc":"IN","ar":"الهند","fb":"hi_IN","ig":"hi_IN"},{"cc":"BD","ar":"بنغلاديش","fb":"bn_BD","ig":"bn_BD"},{"cc":"LK","ar":"سريلانكا","fb":"si_LK","ig":"si_LK"},{"cc":"NP","ar":"نيبال","fb":"ne_NP","ig":"ne_NP"},{"cc":"MV","ar":"المالديف","fb":"dv_MV","ig":"dv_MV"},{"cc":"BT","ar":"بوتان","fb":"dz_BT","ig":"dz_BT"},{"cc":"CN","ar":"الصين","fb":"zh_CN","ig":"zh_CN"},{"cc":"TW","ar":"تايوان","fb":"zh_TW","ig":"zh_TW"},{"cc":"HK","ar":"هونغ كونغ","fb":"zh_HK","ig":"zh_HK"},{"cc":"MO","ar":"ماكاو","fb":"zh_HK","ig":"zh_MO"},{"cc":"JP","ar":"اليابان","fb":"ja_JP","ig":"ja_JP"},{"cc":"KR","ar":"كوريا الجنوبية","fb":"ko_KR","ig":"ko_KR"},{"cc":"MN","ar":"منغوليا","fb":"mn_MN","ig":"mn_MN"},{"cc":"KH","ar":"كمبوديا","fb":"km_KH","ig":"km_KH"},{"cc":"LA","ar":"لاوس","fb":"lo_LA","ig":"lo_LA"},{"cc":"MY","ar":"ماليزيا","fb":"ms_MY","ig":"ms_MY"},{"cc":"SG","ar":"سنغافورة","fb":"en_US","ig":"en_SG"},{"cc":"ID","ar":"إندونيسيا","fb":"id_ID","ig":"id_ID"},{"cc":"PH","ar":"الفلبين","fb":"tl_PH","ig":"tl_PH"},{"cc":"TH","ar":"تايلاند","fb":"th_TH","ig":"th_TH"},{"cc":"VN","ar":"فيتنام","fb":"vi_VN","ig":"vi_VN"},{"cc":"MM","ar":"ميانمار","fb":"my_MM","ig":"my_MM"},{"cc":"GE","ar":"جورجيا","fb":"ka_GE","ig":"ka_GE"},{"cc":"AM","ar":"أرمينيا","fb":"hy_AM","ig":"hy_AM"},{"cc":"AZ","ar":"أذربيجان","fb":"az_AZ","ig":"az_AZ"},{"cc":"KZ","ar":"كازاخستان","fb":"kk_KZ","ig":"kk_KZ"},{"cc":"UZ","ar":"أوزبكستان","fb":"uz_UZ","ig":"uz_UZ"},{"cc":"TM","ar":"تركمانستان","fb":"tk_TM","ig":"tk_TM"},{"cc":"KG","ar":"قيرغيزستان","fb":"ky_KG","ig":"ky_KG"},{"cc":"TJ","ar":"طاجيكستان","fb":"tg_TJ","ig":"tg_TJ"},{"cc":"GB","ar":"المملكة المتحدة","fb":"en_GB","ig":"en_GB"},{"cc":"IE","ar":"أيرلندا","fb":"en_GB","ig":"en_IE"},{"cc":"FR","ar":"فرنسا","fb":"fr_FR","ig":"fr_FR"},{"cc":"DE","ar":"ألمانيا","fb":"de_DE","ig":"de_DE"},{"cc":"IT","ar":"إيطاليا","fb":"it_IT","ig":"it_IT"},{"cc":"ES","ar":"إسبانيا","fb":"es_ES","ig":"es_ES"},{"cc":"PT","ar":"البرتغال","fb":"pt_PT","ig":"pt_PT"},{"cc":"NL","ar":"هولندا","fb":"nl_NL","ig":"nl_NL"},{"cc":"BE","ar":"بلجيكا","fb":"nl_BE","ig":"nl_BE"},{"cc":"LU","ar":"لوكسمبورغ","fb":"fr_LU","ig":"fr_LU"},{"cc":"CH","ar":"سويسرا","fb":"de_CH","ig":"de_CH"},{"cc":"AT","ar":"النمسا","fb":"de_AT","ig":"de_AT"},{"cc":"SE","ar":"السويد","fb":"sv_SE","ig":"sv_SE"},{"cc":"NO","ar":"النرويج","fb":"nb_NO","ig":"nb_NO"},{"cc":"DK","ar":"الدنمارك","fb":"da_DK","ig":"da_DK"},{"cc":"FI","ar":"فنلندا","fb":"fi_FI","ig":"fi_FI"},{"cc":"IS","ar":"آيسلندا","fb":"is_IS","ig":"is_IS"},{"cc":"PL","ar":"بولندا","fb":"pl_PL","ig":"pl_PL"},{"cc":"CZ","ar":"التشيك","fb":"cs_CZ","ig":"cs_CZ"},{"cc":"SK","ar":"سلوفاكيا","fb":"sk_SK","ig":"sk_SK"},{"cc":"HU","ar":"المجر","fb":"hu_HU","ig":"hu_HU"},{"cc":"RO","ar":"رومانيا","fb":"ro_RO","ig":"ro_RO"},{"cc":"BG","ar":"بلغاريا","fb":"bg_BG","ig":"bg_BG"},{"cc":"GR","ar":"اليونان","fb":"el_GR","ig":"el_GR"},{"cc":"CY","ar":"قبرص","fb":"el_CY","ig":"el_CY"},{"cc":"HR","ar":"كرواتيا","fb":"hr_HR","ig":"hr_HR"},{"cc":"RS","ar":"صربيا","fb":"sr_RS","ig":"sr_RS"},{"cc":"SI","ar":"سلوفينيا","fb":"sl_SI","ig":"sl_SI"},{"cc":"BA","ar":"البوسنة والهرسك","fb":"bs_BA","ig":"bs_BA"},{"cc":"MK","ar":"مقدونيا الشمالية","fb":"mk_MK","ig":"mk_MK"},{"cc":"ME","ar":"الجبل الأسود","fb":"sr_ME","ig":"sr_ME"},{"cc":"AL","ar":"ألبانيا","fb":"sq_AL","ig":"sq_AL"},{"cc":"XK","ar":"كوسوفو","fb":"sq_XK","ig":"sq_XK"},{"cc":"UA","ar":"أوكرانيا","fb":"uk_UA","ig":"uk_UA"},{"cc":"BY","ar":"بيلاروسيا","fb":"be_BY","ig":"be_BY"},{"cc":"RU","ar":"روسيا","fb":"ru_RU","ig":"ru_RU"},{"cc":"MD","ar":"مولدوفا","fb":"ro_MD","ig":"ro_MD"},{"cc":"EE","ar":"إستونيا","fb":"et_EE","ig":"et_EE"},{"cc":"LV","ar":"لاتفيا","fb":"lv_LV","ig":"lv_LV"},{"cc":"LT","ar":"ليتوانيا","fb":"lt_LT","ig":"lt_LT"},{"cc":"MC","ar":"موناكو","fb":"fr_MC","ig":"fr_MC"},{"cc":"MT","ar":"مالطا","fb":"en_US","ig":"en_MT"},{"cc":"ZA","ar":"جنوب أفريقيا","fb":"af_ZA","ig":"af_ZA"},{"cc":"NA","ar":"ناميبيا","fb":"en_US","ig":"en_NA"},{"cc":"BW","ar":"بوتسوانا","fb":"en_US","ig":"en_BW"},{"cc":"ZW","ar":"زيمبابوي","fb":"en_US","ig":"en_ZW"},{"cc":"ZM","ar":"زامبيا","fb":"en_US","ig":"en_ZM"},{"cc":"MW","ar":"مالاوي","fb":"en_US","ig":"en_MW"},{"cc":"MZ","ar":"موزمبيق","fb":"pt_PT","ig":"pt_MZ"},{"cc":"AO","ar":"أنغولا","fb":"pt_PT","ig":"pt_AO"},{"cc":"CD","ar":"الكونغو الديمقراطية","fb":"fr_CD","ig":"fr_CD"},{"cc":"CG","ar":"الكونغو","fb":"fr_CG","ig":"fr_CG"},{"cc":"GA","ar":"الغابون","fb":"fr_GA","ig":"fr_GA"},{"cc":"CM","ar":"الكاميرون","fb":"fr_CM","ig":"fr_CM"},{"cc":"TD","ar":"تشاد","fb":"fr_TD","ig":"fr_TD"},{"cc":"GQ","ar":"غينيا الاستوائية","fb":"es_GQ","ig":"es_GQ"},{"cc":"NG","ar":"نيجيريا","fb":"en_US","ig":"en_NG"},{"cc":"GH","ar":"غانا","fb":"en_US","ig":"en_GH"},{"cc":"CI","ar":"ساحل العاج","fb":"fr_CI","ig":"fr_CI"},{"cc":"SN","ar":"السنغال","fb":"fr_SN","ig":"fr_SN"},{"cc":"ML","ar":"مالي","fb":"fr_ML","ig":"fr_ML"},{"cc":"BF","ar":"بوركينا فاسو","fb":"fr_BF","ig":"fr_BF"},{"cc":"NE","ar":"النيجر","fb":"fr_NE","ig":"fr_NE"},{"cc":"GN","ar":"غينيا","fb":"fr_GN","ig":"fr_GN"},{"cc":"SL","ar":"سيراليون","fb":"en_US","ig":"en_SL"},{"cc":"LR","ar":"ليبيريا","fb":"en_US","ig":"en_LR"},{"cc":"TG","ar":"توغو","fb":"fr_TG","ig":"fr_TG"},{"cc":"BJ","ar":"بنين","fb":"fr_BJ","ig":"fr_BJ"},{"cc":"GM","ar":"غامبيا","fb":"en_US","ig":"en_GM"},{"cc":"GW","ar":"غينيا بيساو","fb":"pt_PT","ig":"pt_GW"},{"cc":"CV","ar":"الرأس الأخضر","fb":"pt_PT","ig":"pt_CV"},{"cc":"ET","ar":"إثيوبيا","fb":"am_ET","ig":"am_ET"},{"cc":"ER","ar":"إريتريا","fb":"ti_ER","ig":"ti_ER"},{"cc":"KE","ar":"كينيا","fb":"sw_KE","ig":"sw_KE"},{"cc":"TZ","ar":"تنزانيا","fb":"sw_TZ","ig":"sw_TZ"},{"cc":"UG","ar":"أوغندا","fb":"en_US","ig":"en_UG"},{"cc":"RW","ar":"رواندا","fb":"en_US","ig":"en_RW"},{"cc":"BI","ar":"بوروندي","fb":"fr_BI","ig":"fr_BI"},{"cc":"MG","ar":"مدغشقر","fb":"mg_MG","ig":"mg_MG"},{"cc":"MU","ar":"موريشيوس","fb":"en_US","ig":"en_MU"},{"cc":"SC","ar":"سيشل","fb":"fr_SC","ig":"fr_SC"},{"cc":"LS","ar":"ليسوتو","fb":"en_US","ig":"en_LS"},{"cc":"SZ","ar":"إسواتيني","fb":"en_US","ig":"en_SZ"},{"cc":"US","ar":"الولايات المتحدة","fb":"en_US","ig":"en_US"},{"cc":"CA","ar":"كندا","fb":"en_US","ig":"en_CA"},{"cc":"MX","ar":"المكسيك","fb":"es_LA","ig":"es_MX"},{"cc":"GT","ar":"غواتيمالا","fb":"es_LA","ig":"es_GT"},{"cc":"BZ","ar":"بليز","fb":"en_US","ig":"en_BZ"},{"cc":"SV","ar":"السلفادور","fb":"es_LA","ig":"es_SV"},{"cc":"HN","ar":"هندوراس","fb":"es_LA","ig":"es_HN"},{"cc":"NI","ar":"نيكاراغوا","fb":"es_LA","ig":"es_NI"},{"cc":"CR","ar":"كوستاريكا","fb":"es_LA","ig":"es_CR"},{"cc":"PA","ar":"بنما","fb":"es_LA","ig":"es_PA"},{"cc":"CU","ar":"كوبا","fb":"es_LA","ig":"es_CU"},{"cc":"DO","ar":"الدومينيكان","fb":"es_LA","ig":"es_DO"},{"cc":"HT","ar":"هايتي","fb":"fr_HT","ig":"fr_HT"},{"cc":"JM","ar":"جامايكا","fb":"en_US","ig":"en_JM"},{"cc":"TT","ar":"ترينيداد وتوباغو","fb":"en_US","ig":"en_TT"},{"cc":"BB","ar":"باربادوس","fb":"en_US","ig":"en_BB"},{"cc":"BS","ar":"الباهاما","fb":"en_US","ig":"en_BS"},{"cc":"GY","ar":"غيانا","fb":"en_US","ig":"en_GY"},{"cc":"SR","ar":"سورينام","fb":"nl_SR","ig":"nl_SR"},{"cc":"VE","ar":"فنزويلا","fb":"es_LA","ig":"es_VE"},{"cc":"CO","ar":"كولومبيا","fb":"es_LA","ig":"es_CO"},{"cc":"EC","ar":"الإكوادور","fb":"es_LA","ig":"es_EC"},{"cc":"PE","ar":"بيرو","fb":"es_LA","ig":"es_PE"},{"cc":"BO","ar":"بوليفيا","fb":"es_LA","ig":"es_BO"},{"cc":"PY","ar":"باراغواي","fb":"es_LA","ig":"es_PY"},{"cc":"UY","ar":"أوروغواي","fb":"es_LA","ig":"es_UY"},{"cc":"AR","ar":"الأرجنتين","fb":"es_LA","ig":"es_AR"},{"cc":"CL","ar":"تشيلي","fb":"es_LA","ig":"es_CL"},{"cc":"BR","ar":"البرازيل","fb":"pt_BR","ig":"pt_BR"},{"cc":"PR","ar":"بورتوريكو","fb":"es_LA","ig":"es_PR"},{"cc":"AU","ar":"أستراليا","fb":"en_US","ig":"en_AU"},{"cc":"NZ","ar":"نيوزيلندا","fb":"en_US","ig":"en_NZ"},{"cc":"FJ","ar":"فيجي","fb":"en_US","ig":"en_FJ"},{"cc":"PG","ar":"بابوا غينيا الجديدة","fb":"en_US","ig":"en_PG"},{"cc":"WS","ar":"ساموا","fb":"en_US","ig":"en_WS"},{"cc":"TO","ar":"تونغا","fb":"en_US","ig":"en_TO"},{"cc":"SB","ar":"جزر سليمان","fb":"en_US","ig":"en_SB"},{"cc":"VU","ar":"فانواتو","fb":"en_US","ig":"en_VU"}]};
+
+// ============================================================
+//  GENERATOR CORE — exact port of ua_generator.py architecture
+//  device -> supported OS version -> matching build/WebKit ->
+//  compatible app version -> random ids/locale/resolution
+// ============================================================
+// <<<GEN>>>
+const IPHONES = DATA.iphones, IOS_VERSIONS = DATA.ios_versions,
+      ANDROID_DEVICES = DATA.android_devices, ANDROID_VERSIONS = DATA.android_versions,
+      FB_VERSIONS = DATA.fb_versions, IG_VERSIONS = DATA.ig_versions,
+      CHROME_WEBVIEW = DATA.chrome_webview, ANDROID_CHROME = DATA.android_chrome,
+      FIREFOX_VERSIONS = DATA.firefox_versions, PC_BRANDS = DATA.pc_brands,
+      WIN11_CHROME_MIN = DATA.win11_chrome_min, COUNTRIES = DATA.countries;
+
+function vkey(v){ return v.split(".").map(Number); }
+function vcmp(a, b){
+  const A = vkey(a), B = vkey(b);
+  for (let i = 0; i < Math.max(A.length, B.length); i++){
+    const x = A[i] || 0, y = B[i] || 0;
+    if (x !== y) return x - y;
+  }
+  return 0;
+}
+function iosUnd(v){ return v.replace(/\./g, "_"); }
+function weighted(items, wf){
+  let tot = 0; for (const it of items) tot += wf(it);
+  let r = Math.random() * tot;
+  for (const it of items){ r -= wf(it); if (r <= 0) return it; }
+  return items[items.length - 1];
+}
+function randIgId(){
+  const nd = [6, 7, 8, 9, 9, 10][Math.floor(Math.random() * 6)];
+  const lo = Math.pow(10, nd - 1), hi = Math.pow(10, nd) - 1;
+  return Math.floor(lo + Math.random() * (hi - lo + 1));
+}
+function fbbvFromVersion(ver){
+  // verified rule: major + "0" + build(zfill 2) + hotfix(zfill 3)
+  const p = ver.split(".");
+  if (p.length !== 5) throw new Error("إصدار فيسبوك يجب أن يكون بصيغة 5 أرقام مثل 329.0.0.27.121");
+  return p[0] + "0" + String(parseInt(p[3], 10)).padStart(2, "0") + String(parseInt(p[4], 10)).padStart(3, "0");
+}
+
+function pickIphone(device, ios, iosPool){
+  let pool = device ? IPHONES.filter(d => d.name === device) : (iosPool || IPHONES);
+  if (!pool.length) throw new Error("جهاز غير معروف: " + device);
+  if (ios){
+    if (!IOS_VERSIONS[ios]) throw new Error("إصدار iOS غير معروف: " + ios + " — استخدم إصدارًا من قائمة الإصدارات");
+    pool = pool.filter(d => vcmp(d.min_ios, ios) <= 0 && vcmp(ios, d.max_ios) <= 0);
+    if (!pool.length)
+      throw new Error(device ? "iOS " + ios + " غير مدعوم على " + device : "لا يوجد جهاز في قاعدة البيانات يدعم iOS " + ios);
+    const dev = pool[Math.floor(Math.random() * pool.length)];
+    return [dev, ios];
+  }
+  const dev = pool[Math.floor(Math.random() * pool.length)];
+  const inRange = Object.keys(IOS_VERSIONS).filter(v => vcmp(dev.min_ios, v) <= 0 && vcmp(v, dev.max_ios) <= 0);
+  return [dev, weighted(inRange, v => IOS_VERSIONS[v].weight)];
+}
+
+function pickAndroid(device, av, avPool){
+  let pool = device ? ANDROID_DEVICES.filter(d => d.make === device) : ANDROID_DEVICES;
+  if (!pool.length) throw new Error("جهاز غير معروف: " + device);
+  if (av){
+    const m = parseInt(av, 10);
+    pool = pool.filter(d => d.builds[m]);
+    if (!pool.length)
+      throw new Error(device ? "Android " + av + " غير مدعوم على " + device : "لا يوجد جهاز في قاعدة البيانات يدعم Android " + av);
+    return [pool[Math.floor(Math.random() * pool.length)], m];
+  }
+  if (avPool && avPool.length && !device){
+    pool = pool.filter(d => avPool.some(v => d.builds[v]));
+    if (!pool.length) throw new Error("لا يوجد جهاز يدعم الإصدارات المختارة");
+  }
+  const dev = pool[Math.floor(Math.random() * pool.length)];
+  let keys = Object.keys(dev.builds).map(Number);
+  if (avPool && avPool.length) keys = keys.filter(v => avPool.includes(v));
+  return [dev, keys[Math.floor(Math.random() * keys.length)]];
+}
+
+function pickFbVersion(ios, api, custom){
+  if (custom) return { ver: custom, fbbv: fbbvFromVersion(custom) };
+  let pool = FB_VERSIONS;
+  if (ios !== null && ios !== undefined) pool = pool.filter(v => vcmp(v.min_ios, ios) <= 0);
+  if (api !== null && api !== undefined) pool = pool.filter(v => v.min_api <= api);
+  if (!pool.length) throw new Error("لا يوجد إصدار فيسبوك متوافق مع هذا النظام");
+  return weighted(pool, v => 1 + FB_VERSIONS.indexOf(v));
+}
+
+function pickIgVersion(platform, ios, api, custom){
+  if (custom) return { ver: custom };
+  const table = platform === "ios" ? IG_VERSIONS.ios : IG_VERSIONS.android;
+  let pool = table;
+  if (ios !== null && ios !== undefined) pool = pool.filter(v => vcmp(v.min_ios, ios) <= 0);
+  if (api !== null && api !== undefined) pool = pool.filter(v => v.min_api <= api);
+  if (!pool.length) throw new Error("لا يوجد إصدار إنستجرام متوافق مع هذا النظام");
+  return weighted(pool, v => 1 + table.indexOf(v));
+}
+
+function pickChrome(api, win11){
+  if (api !== null && api !== undefined){
+    const pool = ANDROID_CHROME[api];
+    if (!pool) throw new Error("لا يوجد إصدار Chrome متوافق مع API " + api);
+    return pool[Math.floor(Math.random() * pool.length)];
+  }
+  const pool = CHROME_WEBVIEW.filter(v => !win11 || vkey(v)[0] >= WIN11_CHROME_MIN);
+  return weighted(pool, v => 1 + CHROME_WEBVIEW.indexOf(v)); // Random (recent)
+}
+
+function androidFront(dev, major){
+  const chrome = pickChrome(ANDROID_VERSIONS[major], false);
+  return "Mozilla/5.0 (Linux; Android " + major + "; " + dev.model + " Build/" + dev.builds[major] +
+         "; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/" + chrome + " Mobile Safari/537.36";
+}
+
+function uaFacebookIos(o){
+  const [dev, ver] = pickIphone(o.device, o.ios, o.iosPool);
+  const fb = pickFbVersion(ver, null, o.appVer);
+  const build = IOS_VERSIONS[ver].build;
+  const ua = "Mozilla/5.0 (iPhone; CPU iPhone OS " + iosUnd(ver) + " like Mac OS X) AppleWebKit/605.1.15 " +
+             "(KHTML, like Gecko) Mobile/" + build +
+             " [FBAN/FBIOS;FBAV/" + fb.ver + ";FBBV/" + fb.fbbv + ";FBDV/" + dev.id +
+             ";FBMD/iPhone;FBSN/iOS;FBSV/" + ver + ";FBLC/" + o.localeFb + ";FBOP/5]";
+  return { ua, meta: { brand: "Apple", model: dev.name, os: "iOS", ver: ver, app: "FB " + fb.ver, fmt: "facebook_ios" } };
+}
+
+function uaInstagramIos(o){
+  const [dev, ver] = pickIphone(o.device, o.ios, o.iosPool);
+  const ig = pickIgVersion("ios", ver, null, o.appVer);
+  const ua = "Mozilla/5.0 (iPhone; CPU iPhone OS " + iosUnd(ver) + " like Mac OS X) AppleWebKit/605.1.15 " +
+             "(KHTML, like Gecko) Mobile/15E148 Instagram " + ig.ver + " (" + dev.id + "; iOS " + iosUnd(ver) +
+             "; " + o.localeIg + "; scale=" + dev.scale + "; " + dev.w + "x" + dev.h + "; " + randIgId() + ")";
+  return { ua, meta: { brand: "Apple", model: dev.name, os: "iOS", ver: ver, app: "IG " + ig.ver, fmt: "instagram_ios" } };
+}
+
+function uaSafariIos(o){
+  const [dev, ver] = pickIphone(o.device, o.ios, o.iosPool);
+  const ua = "Mozilla/5.0 (iPhone; CPU iPhone OS " + iosUnd(ver) + " like Mac OS X) AppleWebKit/605.1.15 " +
+             "(KHTML, like Gecko) Version/" + ver + " Mobile/15E148 Safari/604.1";
+  return { ua, meta: { brand: "Apple", model: dev.name, os: "iOS", ver: ver, app: "Safari", fmt: "safari_ios" } };
+}
+
+function uaFacebookAndroid(o){
+  const [dev, major] = pickAndroid(o.device, o.android, o.androidPool);
+  const fb = pickFbVersion(null, ANDROID_VERSIONS[major], o.appVer);
+  const ua = androidFront(dev, major) + " [FB_IAB/FB4A;FBAV/" + fb.ver + ";]";
+  return { ua, meta: { brand: dev.brand, model: dev.model, os: "Android", ver: String(major), app: "FB " + fb.ver, fmt: "facebook_android" } };
+}
+
+function uaInstagramAndroid(o){
+  const [dev, major] = pickAndroid(o.device, o.android, o.androidPool);
+  const ig = pickIgVersion("android", null, ANDROID_VERSIONS[major], o.appVer);
+  const api = ANDROID_VERSIONS[major];
+  const ua = androidFront(dev, major) + " Instagram " + ig.ver + " Android (" + api + "/" + major +
+             "; " + dev.dpi + "dpi; " + dev.w + "x" + dev.h + "; " + dev.brand + "; " + dev.model +
+             "; " + dev.board + "; " + dev.chipset + "; " + o.localeIg + "; " + randIgId() + ")";
+  return { ua, meta: { brand: dev.brand, model: dev.model, os: "Android", ver: String(major), app: "IG " + ig.ver, fmt: "instagram_android" } };
+}
+
+function uaChromeAndroid(o){
+  const [dev, major] = pickAndroid(o.device, o.android, o.androidPool);
+  const chrome = pickChrome(ANDROID_VERSIONS[major], false);
+  const ua = "Mozilla/5.0 (Linux; Android " + major + "; " + dev.model + ") AppleWebKit/537.36 " +
+             "(KHTML, like Gecko) Chrome/" + chrome + " Mobile Safari/537.36";
+  return { ua, meta: { brand: dev.brand, model: dev.model, os: "Android", ver: String(major), app: "Chrome " + chrome.split(".")[0], fmt: "chrome_android" } };
+}
+
+function uaWindows(o){
+  const b = o.browser || ["chrome", "edge", "firefox", "opera"][Math.floor(Math.random() * 4)];
+  const full = pickChrome(null, o.win11 !== false);
+  let major = full.split(".")[0];
+  let chromeTok = o.reduced !== false ? major + ".0.0.0" : full;
+  if (o.browserVer && b !== "firefox"){
+    // typed version is used EXACTLY as written (e.g. 158.0.0.0 or 158.0.8127.36)
+    const p = o.browserVer.split(".");
+    major = p[0];
+    chromeTok = p.length >= 3 ? o.browserVer : p[0] + ".0.0.0";
+  }
+  const base = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) ";
+  let ua, label;
+  if (b === "chrome"){
+    ua = base + "Chrome/" + chromeTok + " Safari/537.36";
+    label = "Chrome " + major;
+  } else if (b === "edge"){ // real current Edge always sends reduced tokens
+    const ct = o.browserVer ? chromeTok : major + ".0.0.0";
+    ua = base + "Chrome/" + ct + " Safari/537.36 Edg/" + major + ".0.0.0";
+    label = "Edge " + major;
+  } else if (b === "opera"){ // Opera major ~= Chromium major - 14 (e.g. C120 -> OPR/106)
+    const ct = o.browserVer ? chromeTok : major + ".0.0.0";
+    ua = base + "Chrome/" + ct + " Safari/537.36 OPR/" + (parseInt(major, 10) - 14) + ".0.0.0";
+    label = "Opera " + (parseInt(major, 10) - 14);
+  } else {
+    let ff;
+    if (o.browserVer) ff = o.browserVer; // typed version used EXACTLY as written
+    else ff = FIREFOX_VERSIONS[Math.floor(Math.random() * FIREFOX_VERSIONS.length)];
+    const rv = ff.split(".")[0] + ".0"; // real Firefox freezes rv: to the major
+    ua = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:" + rv + ") Gecko/20100101 Firefox/" + ff;
+    label = "Firefox " + ff;
+  }
+  return { ua, meta: { brand: PC_BRANDS[Math.floor(Math.random() * PC_BRANDS.length)], model: "Windows PC",
+           os: o.win11 ? "Windows 11" : "Windows 10", ver: "NT 10.0", app: label, fmt: "windows_" + b } };
+}
+
+function uaMacos(o){
+  const b = o.browser || (Math.random() < 0.5 ? "safari" : "chrome");
+  if (b === "safari"){
+    const ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.5 Safari/605.1.15";
+    return { ua, meta: { brand: "Apple", model: "Mac", os: "macOS", ver: "10.15.7", app: "Safari 18.5", fmt: "macos_safari" } };
+  }
+  let tok = pickChrome(null, true).split(".")[0] + ".0.0.0";
+  if (o.browserVer){ const p = o.browserVer.split("."); tok = p.length >= 3 ? o.browserVer : p[0] + ".0.0.0"; }
+  const ua = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/" + tok + " Safari/537.36";
+  return { ua, meta: { brand: "Apple", model: "Mac", os: "macOS", ver: "10.15.7", app: "Chrome " + tok.split(".")[0], fmt: "macos_chrome" } };
+}
+
+function uaLinux(o){
+  const b = o.browser || (Math.random() < 0.5 ? "chrome" : "firefox");
+  if (b === "chrome"){
+    let tok = pickChrome(null, true).split(".")[0] + ".0.0.0";
+    if (o.browserVer){ const p = o.browserVer.split("."); tok = p.length >= 3 ? o.browserVer : p[0] + ".0.0.0"; }
+    const ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/" + tok + " Safari/537.36";
+    return { ua, meta: { brand: "Generic", model: "Linux PC", os: "Linux", ver: "x86_64", app: "Chrome " + tok.split(".")[0], fmt: "linux_chrome" } };
+  }
+  let ff;
+  if (o.browserVer) ff = o.browserVer; // typed version used EXACTLY as written
+  else ff = FIREFOX_VERSIONS[Math.floor(Math.random() * FIREFOX_VERSIONS.length)];
+  const rv = ff.split(".")[0] + ".0"; // real Firefox freezes rv: to the major
+  const ua = "Mozilla/5.0 (X11; Linux x86_64; rv:" + rv + ") Gecko/20100101 Firefox/" + ff;
+  return { ua, meta: { brand: "Generic", model: "Linux PC", os: "Linux", ver: "x86_64", app: "Firefox " + ff, fmt: "linux_firefox" } };
+}
+
+// desktop test tokens — same token shapes the real apps use on mobile,
+// appended to a desktop UA so the user's detection tests fire (clearly labelled)
+function desktopToken(mode, o, platform){
+  if (mode === "facebook"){
+    const fb = pickFbVersion(null, null, o.appVer);
+    return { tok: " [FB_IAB/FB4A;FBAV/" + fb.ver + ";]", app: "FB " + fb.ver };
+  }
+  const ig = pickIgVersion("android", null, null, o.appVer);
+  const tag = platform === "mac" ? "macOS (10.15.7" : platform === "linux" ? "Linux (x86_64" : "Windows (NT/10.0";
+  return { tok: " Instagram " + ig.ver + " " + tag + "; " + o.localeIg + "; " + randIgId() + ")", app: "IG " + ig.ver };
+}
+
+function generateOne(platform, mode, o){
+  const desktop = ["win10", "win11", "mac", "linux"].includes(platform);
+  if (mode === "mixed") mode = ["standard", "facebook", "instagram"][Math.floor(Math.random() * 3)];
+  if (desktop && (mode === "facebook" || mode === "instagram")){
+    let base;
+    if (platform === "win10") base = uaWindows(Object.assign({}, o, { win11: false }));
+    else if (platform === "win11") base = uaWindows(Object.assign({}, o, { win11: true }));
+    else if (platform === "mac") base = uaMacos(o);
+    else base = uaLinux(o);
+    const t = desktopToken(mode, o, platform);
+    base.ua += t.tok;
+    base.meta.app = t.app + " · توكن اختبار";
+    const platFamily = platform === "win10" || platform === "win11" ? "windows"
+                     : platform === "mac" ? "macos" : platform;
+    base.meta.fmt = platFamily + "_" + mode;
+    return base;
+  }
+  if (platform === "ios"){
+    if (mode === "facebook") return uaFacebookIos(o);
+    if (mode === "instagram") return uaInstagramIos(o);
+    return uaSafariIos(o);
+  }
+  if (platform === "android"){
+    if (mode === "facebook") return uaFacebookAndroid(o);
+    if (mode === "instagram") return uaInstagramAndroid(o);
+    return uaChromeAndroid(o);
+  }
+  if (platform === "win10") return uaWindows(Object.assign({}, o, { win11: false }));
+  if (platform === "win11") return uaWindows(Object.assign({}, o, { win11: true }));
+  if (platform === "mac") return uaMacos(o);
+  return uaLinux(o);
+}
+
+const FORMAT_REGEXES = {
+  facebook_ios: /^Mozilla\/5\.0 \(iPhone; CPU iPhone OS \d+_\d+(?:_\d+)? like Mac OS X\) AppleWebKit\/605\.1\.15 \(KHTML, like Gecko\) Mobile\/[0-9A-Z]+ \[FBAN\/FBIOS;FBAV\/\d+\.\d+\.\d+\.\d+\.\d+;FBBV\/\d+;FBDV\/iPhone\d+,\d+;FBMD\/iPhone;FBSN\/iOS;FBSV\/\d+\.\d+(?:\.\d+)?;FBLC\/[a-z]{2}_[A-Z]{2};FBOP\/5\]$/,
+  instagram_ios: /^Mozilla\/5\.0 \(iPhone; CPU iPhone OS \d+_\d+(?:_\d+)? like Mac OS X\) AppleWebKit\/605\.1\.15 \(KHTML, like Gecko\) Mobile\/15E148 Instagram \d+\.\d+\.\d+\.\d+\.\d+ \(iPhone\d+,\d+; iOS \d+_\d+(?:_\d+)?; [a-z]{2}_[A-Z]{2}; scale=\d\.\d{2}; \d+x\d+; \d{6,10}\)$/,
+  facebook_android: /^Mozilla\/5\.0 \(Linux; Android \d+; [\w\-\(\) ]+ Build\/[A-Z0-9\.\-]+; wv\) AppleWebKit\/537\.36 \(KHTML, like Gecko\) Version\/4\.0 Chrome\/\d+\.\d+\.\d+\.\d+ Mobile Safari\/537\.36 \[FB_IAB\/FB4A;FBAV\/\d+\.\d+\.\d+\.\d+\.\d+;\]$/,
+  instagram_android: /^Mozilla\/5\.0 \(Linux; Android \d+; [\w\-\(\) ]+ Build\/[A-Z0-9\.\-]+; wv\) AppleWebKit\/537\.36 \(KHTML, like Gecko\) Version\/4\.0 Chrome\/\d+\.\d+\.\d+\.\d+ Mobile Safari\/537\.36 Instagram \d+\.\d+\.\d+\.\d+\.\d+ Android \(\d+\/\d+; \d+dpi; \d+x\d+; [A-Za-z]+; [\w\-\(\) ]+; [a-z0-9]+; [a-z0-9]+; [a-z]{2}_[A-Z]{2}; \d{6,10}\)$/,
+  safari_ios: /^Mozilla\/5\.0 \(iPhone; CPU iPhone OS \d+_\d+(?:_\d+)? like Mac OS X\) AppleWebKit\/605\.1\.15 \(KHTML, like Gecko\) Version\/\d+\.\d+(?:\.\d+)? Mobile\/15E148 Safari\/604\.1$/,
+  chrome_android: /^Mozilla\/5\.0 \(Linux; Android \d+; [\w\-\(\) ]+\) AppleWebKit\/537\.36 \(KHTML, like Gecko\) Chrome\/\d+\.\d+\.\d+\.\d+ Mobile Safari\/537\.36$/,
+  windows_chrome: /^Mozilla\/5\.0 \(Windows NT 10\.0; Win64; x64\) AppleWebKit\/537\.36 \(KHTML, like Gecko\) Chrome\/\d+\.\d+\.\d+\.\d+ Safari\/537\.36$/,
+  windows_edge: /^Mozilla\/5\.0 \(Windows NT 10\.0; Win64; x64\) AppleWebKit\/537\.36 \(KHTML, like Gecko\) Chrome\/(?:\d+\.0\.0\.0|\d+\.\d+\.\d+\.\d+) Safari\/537\.36 Edg\/\d+\.0\.0\.0$/,
+  windows_firefox: /^Mozilla\/5\.0 \(Windows NT 10\.0; Win64; x64; rv:\d+\.0\) Gecko\/20100101 Firefox\/\d+\.0(?:\.\d+)?$/,
+  windows_opera: /^Mozilla\/5\.0 \(Windows NT 10\.0; Win64; x64\) AppleWebKit\/537\.36 \(KHTML, like Gecko\) Chrome\/(?:\d+\.0\.0\.0|\d+\.\d+\.\d+\.\d+) Safari\/537\.36 OPR\/\d+\.0\.0\.0$/,
+  macos_safari: /^Mozilla\/5\.0 \(Macintosh; Intel Mac OS X 10_15_7\) AppleWebKit\/605\.1\.15 \(KHTML, like Gecko\) Version\/\d+\.\d+ Safari\/605\.1\.15$/,
+  macos_chrome: /^Mozilla\/5\.0 \(Macintosh; Intel Mac OS X 10_15_7\) AppleWebKit\/537\.36 \(KHTML, like Gecko\) Chrome\/\d+\.0\.0\.0 Safari\/537\.36$/,
+  linux_chrome: /^Mozilla\/5\.0 \(X11; Linux x86_64\) AppleWebKit\/537\.36 \(KHTML, like Gecko\) Chrome\/\d+\.0\.0\.0 Safari\/537\.36$/,
+  linux_firefox: /^Mozilla\/5\.0 \(X11; Linux x86_64; rv:\d+\.0\) Gecko\/20100101 Firefox\/\d+\.0(?:\.\d+)?$/,
+};
+const FMT_NAMES = {
+  facebook_ios: "فيسبوك — iOS", instagram_ios: "إنستجرام — iOS", facebook_android: "فيسبوك — أندرويد",
+  instagram_android: "إنستجرام — أندرويد", safari_ios: "سفاري — iOS", chrome_android: "كروم — أندرويد",
+  windows_chrome: "كروم — ويندوز", windows_edge: "إيدج — ويندوز", windows_firefox: "فايرفوكس — ويندوز",
+  windows_opera: "أوبرا — ويندوز", macos_safari: "سفاري — ماك", macos_chrome: "كروم — ماك",
+  linux_chrome: "كروم — لينكس", linux_firefox: "فايرفوكس — لينكس",
+  windows_facebook: "فيسبوك — ويندوز (توكن اختبار)", windows_instagram: "إنستجرام — ويندوز (توكن اختبار)",
+  macos_facebook: "فيسبوك — ماك (توكن اختبار)", macos_instagram: "إنستجرام — ماك (توكن اختبار)",
+  linux_facebook: "فيسبوك — لينكس (توكن اختبار)", linux_instagram: "إنستجرام — لينكس (توكن اختبار)"
+};
+// composite desktop formats = real desktop UA + app token appended
+const DESKTOP_TOKEN_FB = / \[FB_IAB\/FB4A;FBAV\/\d+\.\d+\.\d+\.\d+\.\d+;\]$/;
+const DESKTOP_TOKEN_IG = / Instagram \d+\.\d+\.\d+\.\d+\.\d+ (?:Windows|macOS|Linux) \((?:NT\/10\.0|10\.15\.7|x86_64); [a-z]{2}_[A-Z]{2}; \d{6,10}\)$/;
+function isDesktopSocialFmt(fmt){ return /^(windows|macos|linux)_(facebook|instagram)$/.test(fmt); }
+function detectFmt(ua){
+  for (const k in FORMAT_REGEXES) if (FORMAT_REGEXES[k].test(ua)) return k;
+  const m = DESKTOP_TOKEN_FB.exec(ua);
+  if (m){
+    const base = ua.slice(0, m.index);
+    for (const k in FORMAT_REGEXES) if (FORMAT_REGEXES[k].test(base))
+      return base.includes("(Windows NT") ? "windows_facebook" : (base.includes("(Macintosh") ? "macos_facebook" : "linux_facebook");
+  }
+  const m2 = DESKTOP_TOKEN_IG.exec(ua);
+  if (m2){
+    const base = ua.slice(0, m2.index);
+    for (const k in FORMAT_REGEXES) if (FORMAT_REGEXES[k].test(base))
+      return base.includes("(Windows NT") ? "windows_instagram" : (base.includes("(Macintosh") ? "macos_instagram" : "linux_instagram");
+  }
+  return null;
+}
+function validateUa(ua, fmt){
+  if (isDesktopSocialFmt(fmt)){
+    const m = DESKTOP_TOKEN_FB.exec(ua) || DESKTOP_TOKEN_IG.exec(ua);
+    if (!m) return false;
+    const base = ua.slice(0, m.index);
+    for (const k in FORMAT_REGEXES) if (FORMAT_REGEXES[k].test(base)) return true;
+    return false;
+  }
+  const rx = FORMAT_REGEXES[fmt];
+  return !!rx && rx.test(ua);
+}
+// <<<GENEND>>>
+
+// ============================================================
+//  UI STATE + WIRING
+// ============================================================
+const $ = id => document.getElementById(id);
+const state = {
+  mode: "facebook",
+  platform: "ios",
+  androidVersions: new Set(),   // empty = any version the device supports
+  selectedCountries: new Set(), // empty = ALL
+  allCountries: true,
+  device: "",
+  rows: [],
+  history: [],                  // cumulative unique UA store (never repeats)
+};
+const HISTORY_KEY = "uagen_history_v1";
+const HISTORY_CAP = 60000;
+
+function loadHistory(){
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY);
+    if (raw) state.history = JSON.parse(raw) || [];
+  } catch (e) { state.history = []; }
+  seenSet = new Set(state.history); // rebuild after restoring history
+}
+let saveTimer = null;
+function saveHistory(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(flushHistory, 200);
+}
+function flushHistory(){
+  clearTimeout(saveTimer);
+  try {
+    if (state.history.length > HISTORY_CAP)
+      state.history = state.history.slice(state.history.length - HISTORY_CAP);
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(state.history));
+  } catch (e) { /* quota exceeded — keep in-memory only */ }
+}
+window.addEventListener("beforeunload", flushHistory);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushHistory(); });
+let seenSet = new Set(state.history);
+function isSeen(ua){ return seenSet.has(ua); }
+function remember(ua){ if (!seenSet.has(ua)) { seenSet.add(ua); state.history.push(ua); } }
+
+function toast(msg){
+  const t = $("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  clearTimeout(t._h);
+  t._h = setTimeout(() => t.classList.remove("show"), 2200);
+}
+function escapeHtml(s){ return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"); }
+function copyText(text, okMsg){
+  const done = () => toast(okMsg || "تم النسخ ✓");
+  if (navigator.clipboard && navigator.clipboard.writeText){
+    navigator.clipboard.writeText(text).then(done).catch(() => fallbackCopy(text, done));
+  } else fallbackCopy(text, done);
+}
+function fallbackCopy(text, done){
+  const ta = document.createElement("textarea");
+  ta.value = text; ta.style.position = "fixed"; ta.style.opacity = "0";
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand("copy"); done(); } catch (e) { toast("تعذّر النسخ — انسخ يدويًا"); }
+  document.body.removeChild(ta);
+}
+
+// ---------- tabs ----------
+document.querySelectorAll("#tabs .tab").forEach(t => {
+  t.addEventListener("click", () => {
+    document.querySelectorAll("#tabs .tab").forEach(x => x.classList.remove("active"));
+    t.classList.add("active");
+    ["gen", "analyse", "versions", "about"].forEach(id => { $("tab-" + id).style.display = "none"; });
+    $("tab-" + t.dataset.tab).style.display = "";
+    if (t.dataset.tab === "versions") renderVersionsTab();
+  });
+});
+
+// ---------- chips: mode ----------
+document.querySelectorAll("#modeChips .chip").forEach(c => {
+  c.addEventListener("click", () => {
+    document.querySelectorAll("#modeChips .chip").forEach(x => x.classList.remove("on"));
+    c.classList.add("on");
+    state.mode = c.dataset.mode;
+    updateHints();
+  });
+});
+
+// ---------- chips: platform ----------
+function setPlatform(p){
+  state.platform = p;
+  ["androidChips", "iosChips", "desktopChips"].forEach(id =>
+    document.querySelectorAll("#" + id + " .chip").forEach(x => x.classList.remove("on")));
+  if (p === "android"){
+    if (!state.androidVersions.size)
+      document.querySelector('#androidChips .chip[data-av="14"]').classList.add("on");
+    else state.androidVersions.forEach(v =>
+      document.querySelector('#androidChips .chip[data-av="' + v + '"]').classList.add("on"));
+  } else if (p === "ios"){
+    document.querySelector("#iosChips .chip").classList.add("on");
+  } else {
+    document.querySelector('#desktopChips .chip[data-dt="' + p + '"]').classList.add("on");
+  }
+  state.androidVersions = new Set(
+    [...document.querySelectorAll("#androidChips .chip.on")].map(x => x.dataset.av));
+  buildDeviceSelect();
+  updateHints();
+}
+document.querySelectorAll("#androidChips .chip").forEach(c => {
+  c.addEventListener("click", () => {
+    const wasOn = c.classList.contains("on");
+    document.querySelectorAll("#androidChips .chip").forEach(x => x.classList.remove("on"));
+    ["iosChips", "desktopChips"].forEach(id =>
+      document.querySelectorAll("#" + id + " .chip").forEach(x => x.classList.remove("on")));
+    if (!wasOn) c.classList.add("on");
+    state.platform = "android";
+    state.androidVersions = new Set(
+      [...document.querySelectorAll("#androidChips .chip.on")].map(x => x.dataset.av));
+    buildDeviceSelect();
+    updateHints();
+  });
+});
+document.querySelector("#iosChips .chip").addEventListener("click", () => setPlatform("ios"));
+document.querySelectorAll("#desktopChips .chip").forEach(c => {
+  c.addEventListener("click", () => setPlatform(c.dataset.dt));
+});
+
+// ---------- device select ----------
+function buildDeviceSelect(){
+  const sel = $("deviceSel");
+  let opts = '<option value="">عشوائي (كل الأجهزة)</option>';
+  let note = "";
+  if (state.platform === "ios"){
+    IPHONES.forEach(d => opts += '<option value="' + d.name + '">' + d.name + " — " + d.id + "</option>");
+    note = IPHONES.length + " آيفون حقيقي بمعرّفاته وإصدارات iOS المدعومة لكل جهاز";
+  } else if (state.platform === "android"){
+    ANDROID_DEVICES.forEach(d => opts += '<option value="' + d.make + '">' + d.make + " — " + d.model + "</option>");
+    note = ANDROID_DEVICES.length + " جهاز Samsung / Motorola ببيّنات بناء حقيقية لكل إصدار أندرويد";
+  } else if (state.platform === "win10" || state.platform === "win11"){
+    ["chrome|Chrome", "edge|Edge", "firefox|Firefox", "opera|Opera"].forEach(p => {
+      const [v, n] = p.split("|");
+      opts += '<option value="' + v + '">متصفح ' + n + "</option>";
+    });
+    note = "ويندوز 11 يُرسل فعلًا Windows NT 10.0 — وإيدج دائمًا بصيغة Edg/الرقم.0.0.0 المختصرة";
+  } else if (state.platform === "mac"){
+    opts += '<option value="safari">Safari</option><option value="chrome">Chrome</option>';
+    note = "Safari على ماك يُرسل دائمًا Intel Mac OS X 10_15_7 — واقعي 100%";
+  } else if (state.platform === "linux"){
+    opts += '<option value="chrome">Chrome</option><option value="firefox">Firefox</option>';
+    note = "يوزر لينكس القياسي X11; Linux x86_64";
+  }
+  sel.innerHTML = opts;
+  sel.value = "";
+  state.device = ""; // rebuilt dropdown always resets the choice (prevents stale selections)
+  $("deviceNote").textContent = note;
+  // adaptive meaning of the manual version field
+  const mo = $("manualOs");
+  if (state.platform === "ios") mo.placeholder = "مثال: 17.5.1";
+  else if (state.platform === "android") mo.placeholder = "مثال: 14";
+  else mo.placeholder = "إصدار المتصفح مثل: 158.0.0.0 أو 158.0.8127.36 أو 147";
+  $("desktopNote").style.display =
+    ["win10", "win11", "mac", "linux"].includes(state.platform) ? "" : "none";
+}
+$("deviceSel").addEventListener("change", e => { state.device = e.target.value; });
+
+// ---------- countries ----------
+function renderCountries(filter){
+  const box = $("countryList");
+  const q = (filter || "").trim().toLowerCase();
+  let html = "";
+  COUNTRIES.forEach(c => {
+    if (q && c.cc.toLowerCase() !== q && !c.ar.includes(filter.trim()) && !c.ar.includes(q)) return;
+    const sel = state.allCountries || state.selectedCountries.has(c.cc);
+    html += '<div class="c-item' + (sel ? " sel" : "") + '" data-cc="' + c.cc + '"><span class="cc">' + c.cc + "</span><span>" + c.ar + "</span></div>";
+  });
+  box.innerHTML = html || '<div class="c-item">لا نتائج</div>';
+  updateCountryStatus();
+}
+function updateCountryStatus(){
+  const el = $("countryStatus");
+  if (state.allCountries){
+    el.textContent = "المختار: كل الدول (" + COUNTRIES.length + ") — عمود CC يظهر دولة كل سطر. اضغط دولة لتقييدها.";
+  } else {
+    const names = COUNTRIES.filter(c => state.selectedCountries.has(c.cc)).map(c => c.cc + " " + c.ar);
+    el.textContent = "المختار (" + state.selectedCountries.size + "): " +
+      names.slice(0, 6).join(" · ") + (names.length > 6 ? " …" : "");
+  }
+}
+$("countrySearch").addEventListener("input", e => renderCountries(e.target.value));
+$("countrySearch").addEventListener("keydown", e => {
+  if (e.key === "Enter"){ // Enter selects the first filtered country
+    const first = document.querySelector('#countryList .c-item[data-cc]');
+    if (first) first.click();
+  }
+});
+$("countryList").addEventListener("click", e => {
+  const item = e.target.closest(".c-item");
+  if (!item || !item.dataset.cc) return;
+  const cc = item.dataset.cc;
+  if (state.allCountries){ state.allCountries = false; state.selectedCountries = new Set([cc]); }
+  else if (state.selectedCountries.has(cc)) state.selectedCountries.delete(cc);
+  else state.selectedCountries.add(cc);
+  if (!state.selectedCountries.size) state.allCountries = true;
+  $("btnAllCountries").classList.toggle("on", state.allCountries);
+  renderCountries($("countrySearch").value);
+  updateHints();
+});
+$("btnAllCountries").addEventListener("click", () => {
+  state.allCountries = true;
+  state.selectedCountries = new Set();
+  $("btnAllCountries").classList.add("on");
+  renderCountries($("countrySearch").value);
+  updateHints();
+});
+
+function pickCountry(){
+  if (state.allCountries) return COUNTRIES[Math.floor(Math.random() * COUNTRIES.length)];
+  const pool = COUNTRIES.filter(c => state.selectedCountries.has(c.cc));
+  if (!pool.length) return COUNTRIES[Math.floor(Math.random() * COUNTRIES.length)];
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
+// ---------- counts ----------
+document.querySelectorAll("#quickCounts button").forEach(b => {
+  b.addEventListener("click", () => { $("count").value = b.dataset.c; });
+});
+
+// ---------- hints ----------
+function updateHints(){
+  const h = $("uniqHint");
+  const desktop = ["win10", "win11", "mac", "linux"].includes(state.platform);
+  const social = state.mode !== "standard";
+  if (desktop && social){
+    h.textContent = "⚠ على سطح المكتب التفرد محدود واقعيًا: إصدارات المتصفحات × إصدارات التطبيق ≈2000 يوزر فريد. لو ظهرت رسالة بلوغ الحد: فعّل «اسمح بالتكرار» أو اضغط «🗑 مسح السجل».";
+  } else if (desktop){
+    h.textContent = "⚠ يوزر سطح المكتب الحقيقي لا يتغير إلا بإصدار المتصفح — مساحة التفرد ≈170 يوزرًا فريدًا فقط للويندوز. لو احتجت أكثر: فعّل «اسمح بالتكرار» أو اضغط «🗑 مسح السجل».";
+  } else {
+    h.textContent = "";
+  }
+}
+
+// ---------- generation ----------
+function collectOpts(){
+  const manual = $("manualOs").value.trim();
+  const customApp = $("customApp").value.trim();
+  const o = { reduced: $("reducedUA").checked, device: state.device || null, appVer: customApp || null,
+              allowRepeat: $("allowRepeat").checked };
+  const desktop = ["win10", "win11", "mac", "linux"].includes(state.platform);
+  if (desktop){
+    o.browser = state.device || null;          // chosen browser from the dropdown
+    if (manual){
+      if (!/^\d+(\.\d+)*$/.test(manual))
+        throw new Error('صيغة إصدار المتصفح غير مفهومة: "' + manual + '" — اكتب مثل 158.0.0.0 أو 158.0.8127.36 أو 147');
+      o.browserVer = manual;                   // used EXACTLY as typed
+    }
+    return o;
+  }
+  if (state.platform === "ios" || state.platform === "android"){
+    if (manual){
+      if (state.platform === "ios"){
+        if (/^\d+$/.test(manual)) throw new Error('المنصة المختارة iOS — أدخل إصدار iOS مثل "17.5.1"، أو بدّل لشرائح الأندرويد لإصدار "14"');
+        o.ios = manual;
+      } else {
+        if (!/^\d+$/.test(manual)) throw new Error('المنصة المختارة أندرويد — أدخل رقم إصدار مثل "14"، أو بدّل لشرائح iOS لإصدار مثل "17.5.1"');
+        o.android = manual;
+      }
+    } else if (state.platform === "android" && state.androidVersions.size){
+      o.androidPool = [...state.androidVersions].map(Number);
+    }
+  }
+  return o;
+}
+
+// ---------- generation ----------
+function generate(){
+  let count = parseInt($("count").value, 10);
+  if (!count || count < 1) count = 10;
+  count = Math.min(count, 100000);
+
+  let o;
+  try { o = collectOpts(); }
+  catch (e){ toast(e.message); return; }
+  // manual iOS/Android versions are validated inside the pickers: the device
+  // pool is automatically restricted to devices that really support them
+
+  const rows = [];
+  const batchSeen = new Set();
+  const uniq = !o.allowRepeat; // «اسمح بالتكرار»: unique within the batch only, memory untouched
+  const attemptsCap = Math.max(8000, count * 220);
+  const t0 = performance.now();
+  let attempts = 0, exhausted = false;
+
+  while (rows.length < count){
+    attempts++;
+    if (attempts > attemptsCap){ exhausted = true; break; }
+    let r;
+    const cc = pickCountry();
+    try {
+      const oo = Object.assign({}, o, { localeIg: cc.ig, localeFb: cc.fb });
+      r = generateOne(state.platform, state.mode, oo);
+    } catch (e){ toast(e.message); return; }
+    if (batchSeen.has(r.ua)) continue;
+    if (uniq && isSeen(r.ua)) continue;
+    if (uniq) remember(r.ua);
+    batchSeen.add(r.ua);
+    r.n = rows.length + 1;
+    r.cc = cc.cc;
+    r.valid = validateUa(r.ua, r.meta.fmt);
+    rows.push(r);
+  }
+  if (uniq) saveHistory();
+  state.allowRepeat = o.allowRepeat;
+  state.rows = rows;
+  renderRows(rows, count, performance.now() - t0, exhausted);
+}
+
+function renderRows(rows, requested, ms, exhausted){
+  const SHOW_CAP = 2000;
+  const shown = rows.slice(0, SHOW_CAP);
+  const valid = rows.filter(r => r.valid).length;
+  $("stTotal").textContent = rows.length;
+  $("stShown").textContent = shown.length;
+  $("stTime").textContent = (ms / 1000).toFixed(2) + "s";
+  const sv = $("stValid");
+  sv.textContent = valid + "/" + rows.length;
+  sv.className = valid === rows.length ? "ok" : "bad";
+  $("stSeen").textContent = seenSet.size;
+  const note = $("renderNote");
+  if (rows.length > SHOW_CAP){
+    note.style.display = "";
+    note.textContent = "معروض أول " + SHOW_CAP + " من " + rows.length + " — زرّا «نسخ الكل» و«تصدير TXT» يشملان كل السلاسل.";
+  } else note.style.display = "none";
+  const repeat = !!state.allowRepeat;
+  if (exhausted || repeat){
+    note.style.display = "";
+    const parts = [];
+    if (repeat) parts.push("♻ «اسمح بالتكرار» مفعّل — اليوزرات فريدة داخل الدفعة وقد تتكرر عبر الجلسات (لم تُسجَّل في ذاكرة التفرد)");
+    if (exhausted){
+      if (repeat) parts.push("⚠ الاحتمالات الفريدة داخل الدفعة لهذه الإعدادات أقل من المطلوب (" + rows.length + " فقط) — غيّر الإعدادات مثل إزالة الإصدار اليدوي، أو اكتفِ بهذا العدد");
+      else parts.push(rows.length
+        ? "⚠ بلغنا حدّ التفرد الممكن لهذه الإعدادات (" + rows.length + " يوزرًا فريدًا جديدًا). لمزيد: فعّل «اسمح بالتكرار»، أو اضغط «🗑 مسح السجل» بالأعلى، أو غيّر الإعدادات."
+        : "⚠ كل اليوزرات الممكنة لهذه الإعدادات موجودة أصلًا في ذاكرة التفرد عندك (تراكمي " + seenSet.size + " يوزر) — لذلك لم يظهر شيء. فعّل «اسمح بالتكرار»، أو اضغط «🗑 مسح السجل» بالأعلى، أو غيّر المنصة/الإعدادات.");
+    }
+    note.textContent = parts.join(" — ") + ".";
+  } else note.style.display = "none";
+  let html = "";
+  shown.forEach(r => {
+    html += "<tr>" +
+      '<td class="num">' + String(r.n).padStart(5, "0") + "</td>" +
+      '<td class="cc">' + escapeHtml(r.cc || "—") + "</td>" +
+      "<td class=\"brand\">" + escapeHtml(r.meta.brand) + "</td>" +
+      '<td class="model">' + escapeHtml(r.meta.model) + "</td>" +
+      '<td><span class="oschip">' + escapeHtml(r.meta.os) + (r.meta.ver ? " " + r.meta.ver : "") + "</span></td>" +
+      "<td>" + escapeHtml(r.meta.app) + "</td>" +
+      '<td class="ua">' + escapeHtml(r.ua) + "</td>" +
+      '<td class="okv' + (r.valid ? "" : " bad") + '">' + (r.valid ? "✓" : "✗") + "</td>" +
+      '<td><button class="copybtn" data-ua="' + escapeHtml(r.ua) + '">⧉ نسخ</button></td>' +
+      "</tr>";
+  });
+  $("tbody").innerHTML = html || '<tr><td colspan="9" class="empty">لا نتائج</td></tr>';
+}
+
+$("tbody").addEventListener("click", e => {
+  const btn = e.target.closest(".copybtn");
+  if (btn) copyText(btn.dataset.ua, "تم نسخ اليوزر ✓");
+});
+$("btnCopyAll").addEventListener("click", () => {
+  if (!state.rows.length) return toast("ولّد يوزرات أولًا");
+  copyText(state.rows.map(r => r.ua).join("\n"), "تم نسخ " + state.rows.length + " يوزر ✓");
+});
+$("btnExport").addEventListener("click", () => {
+  if (!state.rows.length) return toast("ولّد يوزرات أولًا");
+  const blob = new Blob([state.rows.map(r => r.ua).join("\n") + "\n"], { type: "text/plain;charset=utf-8" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "ua_" + state.platform + "_" + state.mode + "_" + state.rows.length + ".txt";
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast("تم تصدير الملف ✓");
+});
+$("btnGenerate").addEventListener("click", generate);
+$("count").addEventListener("keydown", e => { if (e.key === "Enter") generate(); });
+
+// ---------- reset uniqueness memory (two-step confirm) ----------
+let resetArmed = false, resetTimer = null;
+$("btnResetHistory").addEventListener("click", () => {
+  const btn = $("btnResetHistory");
+  if (!resetArmed){
+    resetArmed = true;
+    btn.textContent = "اضغط مجددًا للتأكيد";
+    resetTimer = setTimeout(() => { resetArmed = false; btn.textContent = "🗑 مسح السجل"; }, 3500);
+    return;
+  }
+  clearTimeout(resetTimer); resetArmed = false;
+  const cleared = seenSet.size;
+  state.history = [];
+  seenSet = new Set();
+  try { localStorage.removeItem(HISTORY_KEY); } catch (e) { /* ignore */ }
+  $("stSeen").textContent = "0";
+  btn.textContent = "🗑 مسح السجل";
+  toast("تم مسح ذاكرة التفرد (" + cleared + " يوزر) — ولّد من جديد ✓");
+});
+
+// ---------- analyser ----------
+function extractUaFields(ua, rows){
+  const ios = ua.match(/CPU iPhone OS ([\d_]+) like Mac OS X/);
+  if (ios) rows.push(["نظام iOS", ios[1].replace(/_/g, ".")]);
+  const mob = ua.match(/Mobile\/([0-9A-Z]+)/);
+  if (mob) rows.push(["رقم البناء / 15E148", mob[1]]);
+  const igiOS = ua.match(/Instagram ([\d.]+) \(iPhone/);
+  if (igiOS) rows.push(["إصدار إنستجرام", igiOS[1]]);
+  const devId = ua.match(/\(iPhone(\d+,\d+);/);
+  if (devId) rows.push(["معرّف الجهاز", "iPhone" + devId[1]]);
+  const scale = ua.match(/scale=([\d.]+)/);
+  if (scale) rows.push(["مقياس الشاشة", scale[1]]);
+  const res = ua.match(/;\s*(\d+x\d+);/);
+  if (res) rows.push(["دقة الشاشة", res[1]]);
+  const andr = ua.match(/Linux; Android ([\d.]+);/);
+  if (andr) rows.push(["أندرويد", andr[1]]);
+  const wvModel = ua.match(/Linux; Android [\d.]+; (.+?) Build\/[A-Z0-9.\-]+; wv\)/);
+  if (wvModel) rows.push(["موديل الجهاز", wvModel[1]]);
+  const plainModel = !wvModel && ua.match(/Linux; Android [\d.]+; ([^)]+?)\)/);
+  if (plainModel) rows.push(["موديل الجهاز", plainModel[1]]);
+  const build = ua.match(/Build\/([A-Z0-9.\-]+)/);
+  if (build) rows.push(["بيّنة البناء", build[1]]);
+  const chrome = ua.match(/Chrome\/([\d.]+)/);
+  if (chrome) rows.push(["Chrome / WebView", chrome[1]]);
+  const fbav = ua.match(/FBAV\/([\d.]+)/);
+  if (fbav) rows.push(["إصدار فيسبوك", fbav[0].replace("FBAV/", "")]);
+  const fbbv = ua.match(/FBBV\/(\d+)/);
+  if (fbbv) rows.push(["FBBV", fbbv[1]]);
+  const igA = ua.match(/Instagram ([\d.]+) Android \((\d+)\/([\d.]+)/);
+  if (igA){ rows.push(["إصدار إنستجرام", igA[1]]); rows.push(["API Level", igA[2]]); }
+  const api = ua.match(/Android \((\d+)\/(\d+);/);
+  if (api) rows.push(["API Level", api[1]]);
+  const dpi = ua.match(/(\d+)dpi/);
+  if (dpi) rows.push(["كثافة الشاشة", dpi[1] + "dpi"]);
+  const brand = ua.match(/;\s*(samsung|Motorola|Google|google);/);
+  if (brand) rows.push(["العلامة", brand[1]]);
+  const board = ua.match(/;\s*([a-z0-9]+);\s*(qcom|mtk|unisoc|universal[\d]+|s5e[\d]+);/);
+  if (board) rows.push(["لوحة الجهاز / الشريحة", board[1] + " / " + board[2]]);
+  const loc = ua.match(/FBLC\/([a-z]{2}_[A-Z]{2})/);
+  if (loc) rows.push(["لغة فيسبوك FBLC", loc[1]]);
+  const nt = ua.match(/\(Windows NT ([\d.]+);/);
+  if (nt) rows.push(["Windows NT", nt[1]]);
+  const edge = ua.match(/Edg\/([\d.]+)/);
+  if (edge) rows.push(["Edge", edge[1]]);
+  const ff = ua.match(/Firefox\/([\d.]+)/);
+  if (ff) rows.push(["Firefox", ff[1]]);
+  const opr = ua.match(/OPR\/([\d.]+)/);
+  if (opr) rows.push(["Opera", opr[1]]);
+  const browserVer = ua.match(/Chrome\/(\d+\.\d+\.\d+\.\d+)/);
+  if (browserVer) rows.push(["توكن كروم", browserVer[1]]);
+}
+$("btnAnalyse").addEventListener("click", () => {
+  const lines = $("analyseInput").value.split("\n").map(s => s.trim()).filter(Boolean);
+  const verdict = $("analyseVerdict"), box = $("analyseParsed"), kv = $("analyseKv");
+  box.classList.remove("show"); verdict.className = "verdict";
+  if (!lines.length) return;
+  const results = lines.map(ua => ({ ua, fmt: detectFmt(ua) }));
+  const okCount = results.filter(r => r.fmt).length;
+
+  if (lines.length === 1){
+    const r = results[0];
+    if (!r.fmt){
+      verdict.className = "verdict bad";
+      verdict.textContent = "✗ لا يطابق أي صيغة معروفة من صيغ هذه الأداة (فيسبوك/إنستجرام/سفاري/كروم/إيدج/فايرفوكس/أوبرا على iOS أو أندرويد أو سطح المكتب)";
+      return;
+    }
+    verdict.className = "verdict ok";
+    verdict.textContent = "✓ صيغة معروفة: " + (FMT_NAMES[r.fmt] || r.fmt);
+    const rows = [["الصيغة", FMT_NAMES[r.fmt] || r.fmt]];
+    extractUaFields(r.ua, rows);
+    kv.innerHTML = rows.map(x => "<dt>" + escapeHtml(x[0]) + "</dt><dd>" + escapeHtml(x[1]) + "</dd>").join("");
+    box.classList.add("show");
+    return;
+  }
+
+  // multi-line batch (e.g. pasted from نسخ الكل) — verdict per line
+  verdict.className = okCount === lines.length ? "verdict ok" : "verdict bad";
+  verdict.textContent = okCount === lines.length
+    ? "✓ " + lines.length + " سطور — كلها صيغ معروفة وصالحة"
+    : "✗ " + okCount + " من " + lines.length + " سطر معروف فقط — السطور غير المعروفة مُعلَّمة بالأحمر:";
+  const rows = results.map((r, i) =>
+    "<dt>سطر " + (i + 1) + "</dt><dd style='color:" + (r.fmt ? "var(--green)" : "var(--red)") + "'>" +
+    (r.fmt ? "✓ " + escapeHtml(FMT_NAMES[r.fmt] || r.fmt) : "✗ غير معروفة") + "</dd>");
+  kv.innerHTML = rows.join("");
+  box.classList.add("show");
+});
+
+// ---------- versions / data tab ----------
+let versionsRendered = false;
+function renderVersionsTab(){
+  if (versionsRendered) return;
+  versionsRendered = true;
+  const box = $("versionsData");
+  const table = (head, rows) => '<div class="card"><table><thead><tr>' +
+    head.map(h => "<th>" + h + "</th>").join("") + '</tr></thead><tbody>' +
+    rows.map(r => "<tr>" + r.map(c => "<td>" + c + "</td>").join("") + "</tr>").join("") +
+    '</tbody></table></div>';
+  let html = "";
+  html += '<div class="card"><h3>(ب) إصدارات iOS → رقم البناء + إصدار WebKit</h3>' + table(
+    ["الإصدار", "رقم البناء (Mobile/BUILD)", "WebKit"],
+    Object.keys(IOS_VERSIONS).sort(vcmp).map(v => [v, IOS_VERSIONS[v].build, IOS_VERSIONS[v].webkit])) + "</div>";
+  html += '<div class="card"><h3>(أ) أجهزة iPhone — المعرّف + مدى iOS المدعوم + الشاشة</h3>' + table(
+    ["المعرّف", "الجهاز", "أدنى iOS", "أقصى iOS", "المقياس", "الدقة"],
+    IPHONES.map(d => [d.id, d.name, d.min_ios, d.max_ios, d.scale, d.w + "×" + d.h])) + "</div>";
+  html += '<div class="card"><h3>(ج) أجهزة أندرويد — Samsung / Motorola</h3>' + table(
+    ["العلامة", "الجهاز", "الموديل", "اللوحة (board)", "الشريحة", "dpi", "الدقة", "إصدارات مدعومة + بيّنة البناء"],
+    ANDROID_DEVICES.map(d => [d.brand, d.make, d.model, d.board, d.chipset, d.dpi, d.w + "×" + d.h,
+      Object.keys(d.builds).map(v => "أندرويد " + v + " → " + d.builds[v]).join(" · ")])) + "</div>";
+  html += '<div class="card"><h3>(د) إصدارات فيسبوك → FBBV</h3>' + table(
+    ["الإصدار (FBAV)", "FBBV", "أدنى iOS", "أدنى API أندرويد"],
+    FB_VERSIONS.map(v => [v.ver, v.fbbv, v.min_ios, v.min_api])) +
+    '<p class="src">قاعدة FBBV المحقّقة: المُعرّف الرئيسي + 0 + رقم البناء (خانتان) + رقم الإصلاح (3 خانات) — أمثلة حقيقية: 259.0.0.21.111 ← 259021111، 446.0.0.32.90 ← 446032090.</p></div>';
+  html += '<div class="card"><h3>(هـ) إصدارات إنستجرام ← التوافق</h3>' + table(
+    ["iOS الإصدار", "أدنى iOS", "أندرويد الإصدار", "أدنى API"],
+    (() => {
+      const rows = [];
+      IG_VERSIONS.ios.forEach(v => rows.push([v.ver, v.min_ios, "—", "—"]));
+      IG_VERSIONS.android.forEach(v => rows.push(["—", "—", v.ver, v.min_api]));
+      return rows;
+    })()) + "</div>";
+  html += '<div class="card"><h3>(و) إصدارات Chrome / WebView</h3><p class="src" style="margin-bottom:6px">' +
+    CHROME_WEBVIEW.join(" · ") + "</p>" + table(
+      ["API أندرويد", "الإصدارات المتاحة"],
+      Object.keys(ANDROID_CHROME).sort((a, b) => a - b).map(k => [k + " (أندرويد " + {28: 9, 29: 10, 30: 11, 31: 12, 33: 13, 34: 14}[k] + ")", ANDROID_CHROME[k].length + " إصدار"])) + "</div>";
+  html += '<div class="card"><h3>إصدارات Firefox</h3><p class="src">' + FIREFOX_VERSIONS.join(" · ") + "</p></div>";
+  html += '<div class="card"><h3>الدول واللغات</h3><p class="src">' + COUNTRIES.length +
+    ' دولة مضمّنة، ولكل دولة لغة FBLC الخاصة بفيسبوك ولغة الجهاز الخاصة بإنستجرام (مثال: مصر ← ar_AR لفيسبوك، ar_EG لإنستجرام؛ البرازيل ← pt_BR).</p></div>';
+  html += '<div class="card"><h3>المصادر</h3><p class="src">تحقّق البيانات من قواعد يوزرات عامة وصفحات موردين رسمية: whatismybrowser.com (أمثلة يوزرات Instagram/Facebook حقيقية)، useragents.io، appledb.dev، theapplewiki.com، support.apple.com، deviceatlas.com — آخر مراجعة نوفمبر 2025.</p></div>';
+  box.innerHTML = html;
+}
+
+// ---------- init ----------
+loadHistory();
+$("stSeen").textContent = seenSet.size;
+setPlatform("ios");
+renderCountries("");
+window.__uaTest = { generateOne, generate, validateUa, state, FORMAT_REGEXES, pickIphone, pickAndroid, vcmp, weighted, randIgId, fbbvFromVersion, uaWindows, uaMacos, uaLinux, uaFacebookIos, uaInstagramIos, uaSafariIos, uaFacebookAndroid, uaInstagramAndroid, uaChromeAndroid, remember, isSeen, seenSet: () => seenSet, saveHistory, loadHistory, collectOpts };
+
+</script>
+</body>
+</html>

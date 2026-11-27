@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#123e36" />
+    <meta
+      name="description"
+      content="Madar, an original learning-platform starter with local demo and AWS connection modes."
+    />
+    <title>Madar · Make room for what's next</title>
+    <link rel="icon" href="./mark.svg" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <div class="mode-banner" id="mode-banner"></div>
+    <header class="header">
+      <a class="brand" href="#" aria-label="Madar home"
+        ><span class="brand-mark">m<span>✳</span></span
+        ><span>MADAR<small>LEARN IN YOUR ORBIT</small></span></a
+      >
+      <nav aria-label="Main">
+        <button class="nav-link active" id="explore-nav"></button
+        ><button class="nav-link" id="learning-nav"></button
+        ><button class="nav-link" id="workspace-nav" hidden></button>
+      </nav>
+      <div class="header-actions">
+        <button class="language" id="language" aria-label="Change language">
+          العربية</button
+        ><button id="demo-tools" class="text-button" hidden></button
+        ><button class="login button-outline" id="login"></button>
+      </div>
+    </header>
+    <main id="main"></main>
+    <footer>
+      <a class="brand footer-brand" href="#">MADAR<span>✳</span></a>
+      <p id="footer-copy"></p>
+      <span id="footer-note"></span>
+    </footer>
+    <dialog id="dialog" aria-labelledby="dialog-title">
+      <button class="close" id="close-dialog" aria-label="Close dialog">
+        ×
+      </button>
+      <div id="dialog-content"></div>
+    </dialog>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
